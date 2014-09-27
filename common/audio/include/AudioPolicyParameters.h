@@ -11,12 +11,15 @@ enum PolicyParameters
 };
 
 // for User Case Manager
+#ifndef __MTK_AUDIO_USER_CASE_MANAGER_CONSTANTS_DEFINED
+#define __MTK_AUDIO_USER_CASE_MANAGER_CONSTANTS_DEFINED
 static const char *keyInitVoume = "VolumeInit";
 static const char *keySetVoumeIndex = "SetVolumeIndex";
 static const char *keySetStreamStart = "SetStreamStart";
 static const char *keySetStreamStop = "SetStreamStop";
 static const char *keySetRecordStreamStart = "SetRecordStreamStart";
 static const char *keySetRecordStreamStop = "SetRecordStreamStop";
+#endif
 
 //!  BESLOUDNESS_CONTROL_CALLBACK_STRUCT interface
 /*!

@@ -3,7 +3,7 @@
 #include "AudioLock.h"
 
 extern "C" {
-#include  <include/media/bli_exp.h>
+#include  <bli_exp.h>
 }
 
 namespace android

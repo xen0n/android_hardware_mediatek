@@ -36,7 +36,7 @@
 ifeq ($(strip $(BOARD_USES_MTK_AUDIO)),true)
 
 LOCAL_PATH:= $(call my-dir)
-LOCAL_COMMON_PATH:=../../../common
+LOCAL_COMMON_PATH:=../../common
 
 include $(CLEAR_VARS)
 
@@ -93,77 +93,81 @@ endif
 
 #LOCAL_GENERATE_CUSTOM_FOLDER := custom:hal/audioflinger
 
-$(warning $(TOPDIR))
+#$(warning $(TOPDIR))
 
 LOCAL_C_INCLUDES:= \
-    ./$(TOPDIR)/mediatek/frameworks-ext/av \
-    $(TOPDIR)/hardware/libhardware_legacy/include \
-    $(TOPDIR)/hardware/libhardware/include \
-    $(TOPDIR)/frameworks/av/include \
-    $(TOPDIR)/bionic/libc/kernel/common \
+    hardware/libhardware_legacy/include \
+    hardware/libhardware/include \
+    frameworks/av/include \
+    bionic/libc/kernel/common \
     $(call include-path-for, audio-utils) \
 	$(call include-path-for, audio-effects) \
-    $(MTK_PATH_SOURCE)/platform/common/hardware/audio/include \
-    $(MTK_PATH_SOURCE)/platform/common/hardware/audio/V2/aud_drv \
-    $(MTK_PATH_SOURCE)/platform/common/hardware/audio/V2/include \
-    $(MTK_PATH_SOURCE)/platform/common/hardware/audio/V2 \
-    $(MTK_PATH_PLATFORM)/hardware/audio/include \
-    $(MTK_PATH_SOURCE)/external/nvram/libnvram \
-    $(MTK_PATH_SOURCE)/external/AudioCompensationFilter \
-    $(MTK_PATH_SOURCE)/external/AudioComponentEngine \
-    $(MTK_PATH_SOURCE)/external/cvsd_plc_codec \
-    $(MTK_PATH_SOURCE)/external/msbc_codec \
-    $(MTK_PATH_SOURCE)/external/bluetooth/driver/inc \
-    $(MTK_PATH_SOURCE)/frameworks/av/include/media \
-    $(MTK_PATH_SOURCE)/frameworks-ext/av/include/media \
-    $(MTK_PATH_SOURCE)/frameworks-ext/av/include \
-    $(MTK_PATH_SOURCE)/frameworks/av/include \
-    $(MTK_PATH_SOURCE)/external/audiodcremoveflt \
-    $(MTK_PATH_SOURCE)/external/audiocustparam \
-    $(MTK_PATH_SOURCE)/external/AudioSpeechEnhancement/inc \
-    $(MTK_PATH_SOURCE)/external/dfo/featured \
-    $(TARGET_OUT_HEADERS)/dfo \
-    $(MTK_ROOT_CUSTOM_OUT)/hal/audioflinger \
-    $(MTK_ROOT_CUSTOM_OUT)/hal/audioflinger/audio
+    hardware/mediatek/common/audio/include \
+    hardware/mediatek/common/audio/V2/aud_drv \
+    hardware/mediatek/common/audio/V2/include \
+    hardware/mediatek/common/audio/V2 \
+    hardware/mediatek/mt6592/audio/include \
+    mediatek-min/external/nvram/libnvram \
+    mediatek-min/external/AudioCompensationFilter \
+    mediatek-min/external/AudioComponentEngine \
+    mediatek-min/external/cvsd_plc_codec \
+    mediatek-min/external/bluetooth/driver/inc \
+    frameworks/av/include/media \
+    frameworks-ext/av/include/media \
+    frameworks-ext/av/include \
+    frameworks/av/include \
+    mediatek-min/external/audiodcremoveflt \
+    mediatek-min/external/audiocustparam \
+    mediatek-min/external/AudioSpeechEnhancement/inc \
+    mediatek-min/custom/alston_tddopen/cgen/cfgdefault \
+    mediatek-min/custom/alston_tddopen/cgen/cfgfileinc \
+    mediatek-min/custom/alston_tddopen/cgen/inc \
+	mediatek-min/custom/alston_tddopen/hal/audioflinger \
+	mediatek-min/custom/alston_tddopen/hal/audioflinger/audio \
+	mediatek-min/custom/common/hal/audioflinger \
+
+#    external/msbc_codec \
+#    external/dfo/featured \
+#    $(TARGET_OUT_HEADERS)/dfo \
 
 ifeq ($(EVDO_DT_SUPPORT),yes)
-  LOCAL_C_INCLUDES += $(LOCAL_COMMON_PATH)/hardware/audio/V2/include \
+  LOCAL_C_INCLUDES += $(LOCAL_COMMON_PATH)/audio/V2/include \
     $(MTK_PATH_PLATFORM)/kernel/core/include
 endif
 LOCAL_SRC_FILES+= \
-    $(LOCAL_COMMON_PATH)/hardware/audio/aud_drv/AudioMTKDcRemoval.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/aud_drv/AudioMTKHeadsetMessager.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/aud_drv/AudioUtility.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/aud_drv/AudioFtmBase.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/AudioHardwareInterface.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/audio_hw_hal.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioAnalogControlFactory.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioAnalogFactory.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioDigitalControlFactory.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioMTKStreamManager.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioMTKStreamManagerBase.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioMTKStreamInClient.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioResourceFactory.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioStreamAttribute.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioVolumeFactory.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioSpeechEnhanceInfo.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioSpeechEnhLayer.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioPreProcess.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioVUnlockDL.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioBTCVSDControl.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioMTKFilter.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/WCNChipController.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioFMController.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/aud_drv/AudioMATVController.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechDriverFactory.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechDriverDummy.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechDriverLAD.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechMessengerCCCI.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechMessengerEEMCS.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechEnhancementController.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechBGSPlayer.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechPcm2way.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechVMRecorder.cpp \
+    $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioMTKDcRemoval.cpp \
+    $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioMTKHeadsetMessager.cpp \
+    $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioUtility.cpp \
+    $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioFtmBase.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/AudioHardwareInterface.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/audio_hw_hal.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioAnalogControlFactory.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioAnalogFactory.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioDigitalControlFactory.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioMTKStreamManager.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioMTKStreamManagerBase.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioMTKStreamInClient.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioResourceFactory.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioStreamAttribute.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioVolumeFactory.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioSpeechEnhanceInfo.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioSpeechEnhLayer.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioPreProcess.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioVUnlockDL.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioBTCVSDControl.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioMTKFilter.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/WCNChipController.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioFMController.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioMATVController.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechDriverFactory.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechDriverDummy.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechDriverLAD.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechMessengerCCCI.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechMessengerEEMCS.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechEnhancementController.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechBGSPlayer.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechPcm2way.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechVMRecorder.cpp \
     aud_drv/AudioAfeReg.cpp \
     aud_drv/AudioAnalogReg.cpp \
     aud_drv/AudioAnalogControl.cpp \
@@ -187,8 +191,8 @@ LOCAL_SRC_FILES+= \
     speech_driver/SpeechPhoneCallController.cpp \
     speech_driver/SpeechLoopbackController.cpp
 ifeq ($(EVDO_DT_SUPPORT),yes)    	
-    LOCAL_SRC_FILES += $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechDriverEVDO.cpp \
-                        $(LOCAL_COMMON_PATH)/hardware/audio/V2/speech_driver/SpeechMessengerEVDO.cpp
+    LOCAL_SRC_FILES += $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechDriverEVDO.cpp \
+                        $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechMessengerEVDO.cpp
     LOCAL_CFLAGS += -DEVDO_DT_SUPPORT
 endif
 #USE 4k buffer instead of 2k buffer    
@@ -200,7 +204,7 @@ ifeq ($(ENABLE_AUDIO_DUMP),true)
 endif
 
 #ifeq ($(MTK_VIBSPK_SUPPORT),yes)
-  LOCAL_SRC_FILES += $(LOCAL_COMMON_PATH)/hardware/audio/aud_drv/AudioVIBSPKControl.cpp
+  LOCAL_SRC_FILES += $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioVIBSPKControl.cpp
 #endif
 
 ifeq ($(strip $(MTK_TTY_SUPPORT)),yes)
@@ -228,15 +232,15 @@ LOCAL_SHARED_LIBRARIES += \
     libaudiosetting \
     libaudiocompensationfilter \
     libcvsd_mtk \
-    libmsbc_mtk \
     libaudioutils \
     libaudiocomponentengine \
     libaudiodcrflt
+#    libmsbc_mtk
 
 ifeq ($(HAVE_AEE_FEATURE),yes)
     LOCAL_SHARED_LIBRARIES += libaed
     LOCAL_C_INCLUDES += \
-    $(MTK_PATH_SOURCE)/external/aee/binary/inc
+    mediatek-min/external/aee/binary/inc
     LOCAL_CFLAGS += -DHAVE_AEE_FEATURE
 endif
     
@@ -248,7 +252,7 @@ endif
 
 ifeq ($(USING_TFA9887_EXTAMP),yes)
 LOCAL_CFLAGS += -DUSING_TFA9887_EXTAMP
-LOCAL_C_INCLUDES += $(MTK_PATH_PLATFORM)/hardware/tfa9887/hal/inc 
+LOCAL_C_INCLUDES += hardware/tfa9887/hal/inc 
 LOCAL_STATIC_LIBRARIES += libsrv libtfa libhal     
 LOCAL_SHARED_LIBRARIES += libtfa9887
 endif
@@ -260,7 +264,7 @@ ifneq ($(strip $(NXP_SMARTPA_SUPPORT)),no_nxp)
   ifeq ($(strip $(NXP_SMARTPA_SUPPORT)),tfa9890)
     LOCAL_CFLAGS += -DNXP_SMARTPA_SUPPORT
     LOCAL_CFLAGS += -DI2S_LOW_JITTER_MODE
-    LOCAL_C_INCLUDES += $(MTK_PATH_SOURCE)/external/nxp
+    LOCAL_C_INCLUDES += external/nxp
     LOCAL_SHARED_LIBRARIES += libtfa9890_interface
   endif
 endif
@@ -268,7 +272,7 @@ endif
 ifeq ($(NXP_SMARTPA_SUPPORT),yes)
     LOCAL_CFLAGS += -DNXP_SMARTPA_SUPPORT
     LOCAL_CFLAGS += -DI2S_LOW_JITTER_MODE
-    LOCAL_C_INCLUDES += $(MTK_PATH_SOURCE)/external/nxp
+    LOCAL_C_INCLUDES += external/nxp
     LOCAL_SHARED_LIBRARIES += libtfa9890_interface
 endif
 
@@ -366,7 +370,7 @@ ifeq ($(HAVE_MATV_FEATURE),yes)
 endif
 
 LOCAL_ARM_MODE := arm
-LOCAL_MODULE := libaudio.primary.default
+LOCAL_MODULE := audio.primary.mt6592
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
@@ -399,37 +403,40 @@ ifeq ($(strip $(MTK_USE_ANDROID_MM_DEFAULT_CODE)),yes)
 endif
 
 LOCAL_C_INCLUDES:= \
-    ./$(TOPDIR)/mediatek/frameworks-ext/av \
-    $(TOPDIR)/hardware/libhardware_legacy/include \
-    $(TOPDIR)/hardware/libhardware/include \
-    $(TOPDIR)/frameworks/av/include \
-    $(TOPDIR)/bionic/libc/kernel/common \
-    $(MTK_PATH_SOURCE)/platform/common/hardware/audio/include \
-    $(MTK_PATH_SOURCE)/platform/common/hardware/audio/V2/include \
-    $(MTK_PATH_SOURCE)/platform/common/hardware/audio/V2 \
-    $(MTK_PATH_PLATFORM)/hardware/audio/include \
-    $(MTK_PATH_PLATFORM)/hardware/audio \
-    $(MTK_PATH_SOURCE)/external/nvram/libnvram \
-    $(MTK_PATH_SOURCE)/external/AudioCompensationFilter \
-    $(MTK_PATH_SOURCE)/external/AudioComponentEngine \
-    $(MTK_PATH_SOURCE)/external/HeadphoneCompensationFilter \
-    $(MTK_PATH_SOURCE)/external/audiocustparam \
-    $(MTK_PATH_SOURCE)/frameworks/av/include/media \
-    $(MTK_PATH_SOURCE)/frameworks/av/include \
-    $(MTK_PATH_SOURCE)/frameworks-ext/av/include/media \
-    $(MTK_PATH_SOURCE)/frameworks-ext/av/include \
-    $(MTK_PATH_SOURCE)/external/audiodcremoveflt \
-    $(MTK_PATH_SOURCE)/external/dfo/featured \
-    $(TARGET_OUT_HEADERS)/dfo \
-    $(MTK_ROOT_CUSTOM_OUT)/hal/audioflinger \
-    $(MTK_ROOT_CUSTOM_OUT)/hal/audioflinger/audio
+    hardware/libhardware_legacy/include \
+    hardware/libhardware/include \
+    bionic/libc/kernel/common \
+    hardware/mediatek/common/audio/include \
+    hardware/mediatek/common/audio/V2/include \
+    hardware/mediatek/common/audio/V2 \
+    hardware/mediatek/mt6592/audio/include \
+    hardware/mediatek/mt6592/audio \
+    mediatek-min/external/nvram/libnvram \
+    mediatek-min/external/AudioCompensationFilter \
+    mediatek-min/external/AudioComponentEngine \
+    mediatek-min/external/HeadphoneCompensationFilter \
+    mediatek-min/external/audiocustparam \
+    frameworks/av/include/media \
+    frameworks/av/include \
+    frameworks-ext/av/include/media \
+    frameworks-ext/av/include \
+    mediatek-min/external/audiodcremoveflt \
+    mediatek-min/custom/alston_tddopen/cgen/cfgdefault \
+    mediatek-min/custom/alston_tddopen/cgen/cfgfileinc \
+    mediatek-min/custom/alston_tddopen/cgen/inc \
+	mediatek-min/custom/alston_tddopen/hal/audioflinger \
+	mediatek-min/custom/alston_tddopen/hal/audioflinger/audio \
+	mediatek-min/custom/common/hal/audioflinger \
+
+#    $(MTK_PATH_SOURCE)/external/dfo/featured \
+#    $(TARGET_OUT_HEADERS)/dfo \
 
 LOCAL_SRC_FILES := \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/AudioPolicyManagerBase.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/AudioPolicyCompatClient.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/audio_policy_hal.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/AudioPolicyManagerDefault.cpp \
-    $(LOCAL_COMMON_PATH)/hardware/audio/V2/AudioMTKPolicyManager.cpp
+    $(LOCAL_COMMON_PATH)/audio/V2/AudioPolicyManagerBase.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/AudioPolicyCompatClient.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/audio_policy_hal.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/AudioPolicyManagerDefault.cpp \
+    $(LOCAL_COMMON_PATH)/audio/V2/AudioMTKPolicyManager.cpp
 
 LOCAL_SHARED_LIBRARIES := \
     libcutils \
@@ -441,7 +448,7 @@ LOCAL_SHARED_LIBRARIES := \
 ifeq ($(HAVE_AEE_FEATURE),yes)
     LOCAL_SHARED_LIBRARIES += libaed
     LOCAL_C_INCLUDES += \
-    $(MTK_PATH_SOURCE)/external/aee/binary/inc
+    mediatek-min/external/aee/binary/inc
     LOCAL_CFLAGS += -DHAVE_AEE_FEATURE
 endif
 
@@ -464,7 +471,7 @@ ifeq ($(MTK_DOLBY_DAP_SUPPORT), yes)
         LOCAL_C_INCLUDES += $(TOP)/vendor/dolby/ds1/libds/include/
 endif
 
-LOCAL_MODULE := audio_policy.default
+LOCAL_MODULE := audio_policy.mt6592
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_MODULE_TAGS := optional
 
