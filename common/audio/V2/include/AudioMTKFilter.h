@@ -2,7 +2,10 @@
 #define AUDIO_MTK_FILTER_PROCESS_H
 
 #include "AudioCompensationFilter.h"
+
+#ifdef HAVE_MTK_AUDIO_LOUD
 #include "MtkAudioLoud.h"
+#endif
 
 namespace android
 {
@@ -36,7 +39,11 @@ class AudioMTKFilter
         uint32_t                mChannel;
         uint32_t                mFormat;
         size_t                  mBufferSize;
+
+#ifdef HAVE_MTK_AUDIO_LOUD
         MtkAudioLoud *mFilter;
+#endif
+
         bool                    mStart;
         bool                    mActive;
         mutable Mutex           mLock;

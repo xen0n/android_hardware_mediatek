@@ -86,4 +86,10 @@ typedef enum
 //#define RINGTONE_USE_PMIC
 #endif
 
+// hack
+#define MTK_ENABLE_MD5 true
+#define MTK_ENABLE_MD1 true
+#define MTK_ENABLE_MD2 true
+
+
 #endif

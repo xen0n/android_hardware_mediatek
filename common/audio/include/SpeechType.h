@@ -6,6 +6,10 @@
 namespace android
 {
 
+#ifdef SLOGV
+#undef SLOGV
+#endif
+
 #if 0 // for speech debug usage
 #define SLOGV(...) ALOGD(__VA_ARGS__)
 #else
@@ -15,6 +19,7 @@ namespace android
 enum modem_index_t {
     MODEM_1   = 0,
     MODEM_2   = 1,
+	MODEM_EXTERNAL = 2,
     NUM_MODEM
 };
 

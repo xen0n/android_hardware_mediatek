@@ -1,7 +1,8 @@
+#define LOG_TAG "SpeechLoopbackController"
+
 #include "SpeechLoopbackController.h"
 #include <utils/threads.h>
 
-#define LOG_TAG "SpeechLoopbackController"
 
 // for use max gain for speech loopback
 #define SPEECH_LOOPBACK_USE_MAX_GAIN
@@ -60,10 +61,13 @@ status_t SpeechLoopbackController::OpenModemLoopbackControlFlow(const modem_inde
     {
         mAudioResourceManager->SetAudioMode(AUDIO_MODE_IN_CALL_2);
     }
+#if 0
     else    //External modem
     {
         mAudioResourceManager->SetAudioMode(AUDIO_MODE_IN_CALL_EXTERNAL);
     }
+#endif
+
     // get speech driver instance
     SpeechDriverInterface *pSpeechDriver = mSpeechDriverFactory->GetSpeechDriverByIndex(modem_index);
 

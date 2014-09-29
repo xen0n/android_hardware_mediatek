@@ -1,3 +1,5 @@
+#define LOG_TAG "AudioMTKVolumeController"
+
 #include <math.h>
 #include "audio_custom_exp.h"
 #include <media/AudioSystem.h>
@@ -5,12 +7,11 @@
 #include "AudioMTKVolumeController.h"
 #include "SpeechEnhancementController.h"
 
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
 #include "AudioVIBSPKControl.h"
-//#endif
+#endif
 
-#define LOG_TAG "AudioMTKVolumeController"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0  // just don't use xlog
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
@@ -332,12 +333,12 @@ bool AudioMTKVolumeController::SetVolumeRange(uint32 mode, int32 MaxVolume, int3
     mVolumeMax[mode] = MaxVolume;
     mVolumeMin[mode] = MinVolume;
     mVolumeRange[mode] = VolumeRange;
-    //#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
     if (mode == Audio_Speaker)
     {
         AudioVIBSPKControl::getInstance()->setVibSpkGain(MaxVolume, MinVolume, VolumeRange);
     }
-    //#endif
+#endif
     ALOGD("SetVolumeRange mode=%d, MaxVolume=%d, MinVolume=%d VolumeRange = %d", mode, MaxVolume, MinVolume, VolumeRange);
     return true;
 }
@@ -911,7 +912,7 @@ status_t AudioMTKVolumeController::setMasterVolume(float v, audio_mode_t mode, u
         }
         case AUDIO_MODE_IN_CALL :
         case AUDIO_MODE_IN_CALL_2 :
-        case AUDIO_MODE_IN_CALL_EXTERNAL:
+        //case AUDIO_MODE_IN_CALL_EXTERNAL:
         {
             ALOGW("set mastervolume with in call ~~~~");
             default:
@@ -976,8 +977,8 @@ float AudioMTKVolumeController::getMasterVolume()
 bool AudioMTKVolumeController::ModeSetVoiceVolume(int mode)
 {
     return (mode == AUDIO_MODE_IN_CALL ||
-            mode == AUDIO_MODE_IN_CALL_2 ||
-            mode == AUDIO_MODE_IN_CALL_EXTERNAL);
+            mode == AUDIO_MODE_IN_CALL_2);
+            // || mode == AUDIO_MODE_IN_CALL_EXTERNAL);
 }
 
 uint32_t AudioMTKVolumeController::GetDRCVersion(uint32 device)
@@ -1426,8 +1427,8 @@ bool AudioMTKVolumeController::CheckMicUsageWithMode(uint32_t MicType, int mode)
          MicType == Headset_Mic ||
          MicType == Handfree_Mic) &&
         (mode != AUDIO_MODE_IN_CALL &&
-         mode != AUDIO_MODE_IN_CALL_2 &&
-         mode != AUDIO_MODE_IN_CALL_EXTERNAL))
+         mode != AUDIO_MODE_IN_CALL_2 ))
+         // && mode != AUDIO_MODE_IN_CALL_EXTERNAL))
     {
         return true;
     }
@@ -1481,8 +1482,8 @@ status_t AudioMTKVolumeController::ApplyMicGain(uint32_t MicType, int mode)
 
     // fix me: here need t send reminder DB to HD record or modem side
     if (mode == AUDIO_MODE_IN_CALL ||
-        mode == AUDIO_MODE_IN_CALL_2 ||
-        mode == AUDIO_MODE_IN_CALL_EXTERNAL)
+        mode == AUDIO_MODE_IN_CALL_2)
+        // || mode == AUDIO_MODE_IN_CALL_EXTERNAL)
     {
         ApplyMdUlGain(mSwAgcGain);
     }

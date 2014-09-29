@@ -108,6 +108,8 @@
 
 #include <CFG_AUDIO_File.h>
 
+#define LOG_TAG  "AudioFtm"
+
 #include "AudioFtm.h"
 #include "AudioIoctl.h"
 #include "AudioDef.h"
@@ -125,19 +127,17 @@
 #include "AudioCompFltCustParam.h"
 
 
-#ifdef LOG_TAG
-#undef LOG_TAG
-#endif
-#define LOG_TAG  "AudioFtm"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
 #endif
 #ifdef ALOGW
 #undef ALOGW
-#endif ALOGI
+#endif
+#ifdef ALOGI
 #undef ALOGI
+#endif
 #ifdef ALOGD
 #undef ALOGD
 #endif
@@ -1389,11 +1389,13 @@ int AudioFtm::PhoneMic_Receiver_Acoustic_Loopback(int Acoustic_Type, int *Acoust
 
 int AudioFtm::SetVibSpkCalibrationParam(void *cali_param)
 {
-    return SetAudioCompFltCustParamToNV(AUDIO_COMP_FLT_VIBSPK, (AUDIO_ACF_CUSTOM_PARAM_STRUCT *)cali_param);
+    // return SetAudioCompFltCustParamToNV(AUDIO_COMP_FLT_VIBSPK, (AUDIO_ACF_CUSTOM_PARAM_STRUCT *)cali_param);
+    return 0;
 }
 
 uint32_t AudioFtm::GetVibSpkCalibrationStatus()
 {
+#if 0
     AUDIO_ACF_CUSTOM_PARAM_STRUCT audioParam;
     GetAudioCompFltCustParamFromNV(AUDIO_COMP_FLT_VIBSPK, &audioParam);
     if (audioParam.bes_loudness_WS_Gain_Max != VIBSPK_CALIBRATION_DONE && audioParam.bes_loudness_WS_Gain_Max != VIBSPK_SETDEFAULT_VALUE)
@@ -1404,20 +1406,26 @@ uint32_t AudioFtm::GetVibSpkCalibrationStatus()
     {
         return audioParam.bes_loudness_WS_Gain_Min;
     }
+#endif
+    return 0;
 }
 
 void AudioFtm::SetVibSpkEnable(bool enable, uint32_t freq)
 {
+#if 0
     if (enable)
     {
         AudioVIBSPKControl::getInstance()->setParameters(44100, freq, 0, 0);
     }
     AudioVIBSPKControl::getInstance()->setVibSpkEnable(enable);
+#endif
 }
 
 void AudioFtm::SetVibSpkRampControl(uint8_t rampcontrol)
 {
+#if 0
     AudioVIBSPKControl::getInstance()->VibSpkRampControl(rampcontrol);
+#endif
 }
 
 bool AudioFtm::ReadAuxadcData(int channel, int *value)

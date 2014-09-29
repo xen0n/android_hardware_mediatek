@@ -135,7 +135,8 @@ uint32_t AudioBTCVSDControl::BT_SCO_GetMemorySize_4ByteAlign(BT_SCO_MODULE uModu
             break;
         case BT_SCO_MOD_PLC_NB:
         case BT_SCO_MOD_PLC_WB:
-            uSize = (uint32_t)g711plc_GetMemorySize_v2();
+            //uSize = (uint32_t)g711plc_GetMemorySize_v2();
+			uSize = 0;
             break;
         case BT_SCO_MOD_CVSD_TX_SRC:
             //BLI_GetMemSize(mBTSCOCVSDContext->pTX->uSampleRate, mBTSCOCVSDContext->pTX->uChannelNumber, BTSCO_CVSD_SAMPLERATE_DOMAIN, BTSCO_CVSD_CHANNEL_NUM, &uSize);
@@ -224,8 +225,13 @@ void AudioBTCVSDControl::BT_SCO_InitialModule(BT_SCO_MODULE uModule, uint8_t *pB
             mBTSCOCVSDContext->pRX->pHPFHandle = Audio_IIRHPF_Init((int8_t *)pBuf, btsco_FilterCoeff_64K, 1);
             break;
         case BT_SCO_MOD_PLC_NB:
+#if 0
             g711plc_construct_v2((void *)pBuf, BTSCO_CVSD_PLC_SAMPLERATE);
             mBTSCOCVSDContext->pRX->pPLCHandle = (void *)pBuf;
+#else
+            ALOGE("BT_SCO_MOD_PLC_NB is stubbed for now!");
+			ASSERT(0);
+#endif
             break;
         case BT_SCO_MOD_CVSD_TX_SRC:
             ALOGD("BT_SCO_InitialModule BT_SCO_MOD_CVSD_TX_SRC source: uSampleRate=%d, uChannelNumber=%d", mBTSCOCVSDContext->pTX->uSampleRate, mBTSCOCVSDContext->pTX->uChannelNumber);
@@ -600,7 +606,7 @@ void AudioBTCVSDControl::btsco_process_RX_CVSD(void *inbuf, uint32_t *insize, vo
         if (packetvalid)
         {
             //packet not lost
-            g711plc_addtohistory_v2(mBTSCOCVSDContext->pRX->pPLCHandle, (short *)outbuf, 0);
+            // g711plc_addtohistory_v2(mBTSCOCVSDContext->pRX->pPLCHandle, (short *)outbuf, 0);
         }
         else
         {
@@ -614,7 +620,8 @@ void AudioBTCVSDControl::btsco_process_RX_CVSD(void *inbuf, uint32_t *insize, vo
             }
 #endif
 
-            g711plc_dofe_v2(mBTSCOCVSDContext->pRX->pPLCHandle, (short *)outbuf, 0);
+            // g711plc_dofe_v2(mBTSCOCVSDContext->pRX->pPLCHandle, (short *)outbuf, 0);
+            ALOGW("but g711plc is unavailable, doing nothing...");
         }
     }
     if (mBTSCOCVSDContext->pRX->fEnableFilter)

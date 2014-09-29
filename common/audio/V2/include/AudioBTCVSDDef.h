@@ -49,7 +49,8 @@
 
 
 // mSBC related part
-#define __MSBC_CODEC_SUPPORT__ 1
+// disabled due to unavailable source and headers
+// #define __MSBC_CODEC_SUPPORT__ 1
 
 #define MSBC_BTSTREAM_FRAME_BYTE  (57)
 #define MSBC_PACKET_SIZE_BYTE     (60)

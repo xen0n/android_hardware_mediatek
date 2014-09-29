@@ -61,6 +61,8 @@
 #include <time.h>
 #include <sys/time.h>
 
+#define LOG_TAG "AudioSPELayer"
+
 #include <utils/Log.h>
 #include <utils/String8.h>
 
@@ -75,7 +77,6 @@
 
 #include "audio_hd_record_48k_custom.h"
 
-#define LOG_TAG "AudioSPELayer"
 
 namespace android
 {
@@ -480,6 +481,7 @@ bool SPELayer::DumpMutexUnlock(void)
 //set MMI table, dynamic on/off
 bool SPELayer::SetDynamicFuncCtrl(const SPE_MMI_CONTROL_TABLE func, const bool enable)
 {
+#if 0
     Mutex::Autolock lock(mLock);
     const bool current_state = ((mMMI_ctrl_mask & func) > 0);
     ALOGD("%s(), SetDynamicFuncCtrl %x(%x), enable(%d) == current_state(%d)",
@@ -507,6 +509,10 @@ bool SPELayer::SetDynamicFuncCtrl(const SPE_MMI_CONTROL_TABLE func, const bool e
 
     mSph_Enh_ctrl.MMI_ctrl = mMMI_ctrl_mask;
     ALOGD("%s(), SetDynamicFuncCtrl %x", __FUNCTION__, mMMI_ctrl_mask);
+#else
+    ALOGW("%s(): STUB", __FUNCTION__);
+#endif
+
     return true;
 }
 
@@ -1138,8 +1144,12 @@ bool    SPELayer::Start(SPE_MODE mode)  //for VOIP, both uplink/downlink
         mSph_Enh_ctrl.MIC_DG = mRecordMICDigitalGain;
         mSph_Enh_ctrl.Fea_Cfg_table = mRecordFea_Cfg_table;
         mSph_Enh_ctrl.App_table = mRecordApp_table;
+
+#if 0
         mSph_Enh_ctrl.MMI_ctrl = mMMI_ctrl_mask;
         mSph_Enh_ctrl.MMI_MIC_GAIN = mRecordULTotalGain;
+#endif
+
         memcpy(&mSph_Enh_ctrl.enhance_pars, &mRecordEnhanceParas, EnhanceParasNum * sizeof(uWord32));
         memcpy(&mSph_Enh_ctrl.DMNR_cal_data, &mRecordDMNRCalData, DMNRCalDataNum * sizeof(Word16));
         memcpy(&mSph_Enh_ctrl.Compen_filter, &mRecordCompenFilter, CompenFilterNum * sizeof(Word16));
@@ -1157,8 +1167,11 @@ bool    SPELayer::Start(SPE_MODE mode)  //for VOIP, both uplink/downlink
             mNormalModeVoIP = true;
         }
 
+#if 0
         mSph_Enh_ctrl.MMI_ctrl = mMMI_ctrl_mask;
         mSph_Enh_ctrl.MMI_MIC_GAIN = mVoIPULTotalGain;
+#endif
+
         memcpy(&mSph_Enh_ctrl.enhance_pars, &mVoIPEnhanceParas, EnhanceParasNum * sizeof(uWord32));
         memcpy(&mSph_Enh_ctrl.DMNR_cal_data, &mVoIPDMNRCalData, DMNRCalDataNum * sizeof(Word16));
         memcpy(&mSph_Enh_ctrl.Compen_filter, &mVoIPCompenFilter, CompenFilterNum * sizeof(Word16));
@@ -1190,7 +1203,9 @@ bool    SPELayer::Start(SPE_MODE mode)  //for VOIP, both uplink/downlink
         return false;
     }
 
+#if 0
     mSph_Enh_ctrl.Device_mode = mRoute;
+#endif
 
     if (mSphCtrlBuffer)
     {
@@ -3983,9 +3998,11 @@ void SPELayer::dump()
             ALOGD("%d",mVoIPCompenFilter[i]);
     */
     //dump using parameters
-    ALOGD("Using:Samplerate = %d, FrameRate=%d,MIC_DG=%d, App_table=%x, Fea_Cfg_table=%x, MMI_table=%x, Device_mode=%x, MMI_MIC_GAIN=%d",
-          mSph_Enh_ctrl.sample_rate, mSph_Enh_ctrl.frame_rate, mSph_Enh_ctrl.MIC_DG, mSph_Enh_ctrl.App_table, mSph_Enh_ctrl.Fea_Cfg_table, mSph_Enh_ctrl.MMI_ctrl,
-          mSph_Enh_ctrl.Device_mode, mSph_Enh_ctrl.MMI_MIC_GAIN);
+    //ALOGD("Using:Samplerate = %d, FrameRate=%d,MIC_DG=%d, App_table=%x, Fea_Cfg_table=%x, MMI_table=%x, Device_mode=%x, MMI_MIC_GAIN=%d",
+    //      mSph_Enh_ctrl.sample_rate, mSph_Enh_ctrl.frame_rate, mSph_Enh_ctrl.MIC_DG, mSph_Enh_ctrl.App_table, mSph_Enh_ctrl.Fea_Cfg_table, mSph_Enh_ctrl.MMI_ctrl,
+    //      mSph_Enh_ctrl.Device_mode, mSph_Enh_ctrl.MMI_MIC_GAIN);
+    ALOGD("Using:Samplerate = %d, FrameRate=%d,MIC_DG=%d, App_table=%x, Fea_Cfg_table=%x",
+          mSph_Enh_ctrl.sample_rate, mSph_Enh_ctrl.frame_rate, mSph_Enh_ctrl.MIC_DG, mSph_Enh_ctrl.App_table, mSph_Enh_ctrl.Fea_Cfg_table);
     ALOGD("Using:EnhanceParas");
     for (int i = 0; i < (EnhanceParasNum / 7); i++)
         ALOGD("[index %d] %d,%d,%d,%d,%d,%d,%d", i, mSph_Enh_ctrl.enhance_pars[i * 7], mSph_Enh_ctrl.enhance_pars[i * 7 + 1], mSph_Enh_ctrl.enhance_pars[i * 7 + 2]

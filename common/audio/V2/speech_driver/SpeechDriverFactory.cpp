@@ -1,16 +1,21 @@
+#define LOG_TAG "SpeechDriverFactory"
+
 #include "SpeechDriverFactory.h"
 #include "SpeechType.h"
 #include "SpeechDriverInterface.h"
 #include "SpeechDriverDummy.h"
 #include "SpeechDriverLAD.h"
+
+#ifdef HAVE_DFO
 #include <DfoDefines.h>
+#endif
 
 #include <utils/threads.h>
 
 #ifdef EVDO_DT_SUPPORT  //evod modem speech driver
 #include "SpeechDriverEVDO.h"
 #endif
-#define LOG_TAG "SpeechDriverFactory"
+
 
 namespace android
 {
@@ -220,9 +225,11 @@ status_t SpeechDriverFactory::SetActiveModemIndexByAudioMode(const audio_mode_t 
         case AUDIO_MODE_IN_CALL_2:
             return_status = SetActiveModemIndex(MODEM_2);
             break;
+#if 0
         case AUDIO_MODE_IN_CALL_EXTERNAL:
             return_status = SetActiveModemIndex(MODEM_EXTERNAL);
             break;
+#endif
         default:
             ALOGE("%s() mode(%d) is neither MODE_IN_CALL nor MODE_IN_CALL_2!!", __FUNCTION__, audio_mode);
             return_status = INVALID_OPERATION;

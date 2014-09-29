@@ -52,7 +52,9 @@ AudioMTKFilter::AudioMTKFilter(
       mChannel(channel),
       mFormat(format),
       mBufferSize(bufferSize),
+#ifdef HAVE_MTK_AUDIO_LOUD
       mFilter(NULL),
+#endif
       mStart(false),
       mActive(false)
 {
@@ -61,16 +63,19 @@ AudioMTKFilter::AudioMTKFilter(
 
 AudioMTKFilter::~AudioMTKFilter()
 {
+#ifdef HAVE_MTK_AUDIO_LOUD
     if (mFilter)
     {
         //mFilter->Stop();
         mFilter->Close();
         //mFilter->Deinit();
     }
+#endif
 }
 
 status_t AudioMTKFilter::init()
 {
+#ifdef HAVE_MTK_AUDIO_LOUD
     Mutex::Autolock _l(&mLock);
     if (mType < AUDIO_COMP_FLT_NUM)
     {
@@ -93,11 +98,14 @@ status_t AudioMTKFilter::init()
             return NO_ERROR;
         }
     }
+#endif
+
     return NO_INIT;
 }
 
 void AudioMTKFilter::start()
 {
+#ifdef HAVE_MTK_AUDIO_LOUD
     Mutex::Autolock _l(mLock);
     if (mFilter && !mActive)
     {
@@ -108,11 +116,14 @@ void AudioMTKFilter::start()
         mStart  = true;
         mActive = true;
     }
+#endif
+
     return;
 }
 
 void AudioMTKFilter::stop()
 {
+#ifdef HAVE_MTK_AUDIO_LOUD
     Mutex::Autolock _l(mLock);
     if (mFilter && mActive)
     {
@@ -123,11 +134,14 @@ void AudioMTKFilter::stop()
         mStart  = false;
         mActive = false;
     }
+#endif
+
     return;
 }
 
 void AudioMTKFilter::pause()
 {
+#ifdef HAVE_MTK_AUDIO_LOUD
     Mutex::Autolock _l(mLock);
     if (mFilter && mActive)
     {
@@ -137,10 +151,12 @@ void AudioMTKFilter::pause()
         mActive = false;
     }
 }
+#endif
 }
 
 void AudioMTKFilter::resume()
 {
+#ifdef HAVE_MTK_AUDIO_LOUD
     Mutex::Autolock _l(mLock);
     if (mFilter && !mActive)
     {
@@ -150,6 +166,7 @@ void AudioMTKFilter::resume()
         mActive = true;
     }
 }
+#endif
 }
 
 bool AudioMTKFilter::isStart()
@@ -166,6 +183,7 @@ bool AudioMTKFilter::isActive()
 
 void AudioMTKFilter::setParameter(void *param)
 {
+#ifdef HAVE_MTK_AUDIO_LOUD
     Mutex::Autolock _l(mLock);
     if (mFilter)
     {
@@ -181,12 +199,14 @@ void AudioMTKFilter::setParameter(void *param)
             mFilter->Change2ByPass();
         
     }
+#endif
 }
 
 void AudioMTKFilter::setParameter2Sub(void *param)
 {
 #if defined(ENABLE_STEREO_SPEAKER)&&defined(MTK_STEREO_SPK_ACF_TUNING_SUPPORT)
 
+#ifdef HAVE_MTK_AUDIO_LOUD
     Mutex::Autolock _l(mLock);
     if (mFilter)
     {
@@ -201,6 +221,8 @@ void AudioMTKFilter::setParameter2Sub(void *param)
         if(!mActive && mStart)
             mFilter->Change2ByPass();         
     }
+#endif
+
 #else
     SXLOGD("UnSupport Stereo Speaker.");
 #endif
@@ -209,6 +231,7 @@ void AudioMTKFilter::setParameter2Sub(void *param)
 
 uint32_t AudioMTKFilter::process(void *inBuffer, uint32_t bytes, void *outBuffer, uint32_t outBytes)
 {
+#ifdef HAVE_MTK_AUDIO_LOUD
     // if return 0, means CompFilter can't do anything. Caller should use input buffer to write to Hw.
     // do post process
     Mutex::Autolock _l(mLock);
@@ -222,6 +245,8 @@ uint32_t AudioMTKFilter::process(void *inBuffer, uint32_t bytes, void *outBuffer
         //SXLOGD("AudioMTKFilter::process type %d mode %d", mType, mMode);
         return outBytes2;
     }
+#endif
+
     return 0;
 }
 
@@ -321,7 +346,7 @@ bool AudioMTKFilterManager::init()
     mFixedParam = (result ? true : false);
 #endif
 
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
     mVIBSPKFilter = new AudioMTKFilter(AUDIO_COMP_FLT_VIBSPK, AUDIO_CMP_FLT_LOUDNESS_COMP,
                                         mSamplerate, mChannel, mFormat, mBufferSize);
 
@@ -333,7 +358,7 @@ bool AudioMTKFilterManager::init()
 
     ASSERT(mBuffer != NULL);
 
-//#endif
+#endif
 
 
     SXLOGD("init() fixedParam %d", mFixedParam);
@@ -353,18 +378,18 @@ void AudioMTKFilterManager::start()
         if (mEnhanceFilter) { mEnhanceFilter->stop(); }
         // start acf
         if (mSpeakerFilter) { mSpeakerFilter->start(); }
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
         if (IsAudioSupportFeature(AUDIO_SUPPORT_VIBRATION_SPEAKER))
         if (mVIBSPKFilter) { mVIBSPKFilter->start(); }
-//#endif
+#endif
 
     }
     else if ((device & AUDIO_DEVICE_OUT_WIRED_HEADSET) || (device & AUDIO_DEVICE_OUT_WIRED_HEADPHONE))
     {
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
         if (IsAudioSupportFeature(AUDIO_SUPPORT_VIBRATION_SPEAKER))
         if (mVIBSPKFilter) { mVIBSPKFilter->stop(); }
-//#endif
+#endif
         // stop acf
         if (mSpeakerFilter) { mSpeakerFilter->stop(); }
         // start hcf
@@ -389,7 +414,7 @@ void AudioMTKFilterManager::start()
             }
         }
     }
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
     else if(device & AUDIO_DEVICE_OUT_EARPIECE)
     {
         if (IsAudioSupportFeature(AUDIO_SUPPORT_VIBRATION_SPEAKER) && IsAudioSupportFeature(AUDIO_SUPPORT_2IN1_SPEAKER))
@@ -400,17 +425,17 @@ void AudioMTKFilterManager::start()
         if (mVIBSPKFilter) { mVIBSPKFilter->start(); }
     }   
     }   
-//#endif
+#endif
 
 }
 
 void AudioMTKFilterManager::stop()
 {
     SXLOGV("stop()");
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
     if (IsAudioSupportFeature(AUDIO_SUPPORT_VIBRATION_SPEAKER))
     if (mVIBSPKFilter) { mVIBSPKFilter->stop(); }
-//#endif
+#endif
     if (mSpeakerFilter) { mSpeakerFilter->stop(); }
     if (mHeadphoneFilter) { mHeadphoneFilter->stop(); }
     if (mEnhanceFilter) { mEnhanceFilter->stop(); }
@@ -430,12 +455,12 @@ bool  AudioMTKFilterManager::isFilterStart(uint32_t type)
     {
         return mEnhanceFilter->isStart();
     }
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
     else if (type == AUDIO_COMP_FLT_VIBSPK && mVIBSPKFilter && (IsAudioSupportFeature(AUDIO_SUPPORT_VIBRATION_SPEAKER)))
     {
         return mVIBSPKFilter->isStart();
     }
-//#endif
+#endif
 
     return false;
 }
@@ -582,10 +607,12 @@ void AudioMTKFilterManager::setParameter(uint32_t type, void *param)
     {
         return mEnhanceFilter->setParameter(param);
     }
+#if 0
     else if (type == AUDIO_COMP_FLT_AUDIO_SUB && mSpeakerFilter)
     {
         return mSpeakerFilter->setParameter2Sub(param);
     }
+#endif
 }
 
 }

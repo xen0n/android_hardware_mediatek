@@ -1,8 +1,9 @@
+#define LOG_TAG "AudioMTKStreamInClient"
+
 #include "AudioType.h"
 #include "AudioMTKStreamInClient.h"
 
-#define LOG_TAG "AudioMTKStreamInClient"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0  // just don't use xlog
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
@@ -64,7 +65,7 @@ AudioMTKStreamInClient::AudioMTKStreamInClient(uint32 BuffeSize, uint32 clientid
     mStreamIn = NULL;
     memset(&mInputStartTime, 0, sizeof(timespec));
 
-    ALOGD("AudioMTKStreamInClient constructor pBufBase = 0x%x  mClientId = %d",
+    ALOGD("AudioMTKStreamInClient constructor pBufBase = %p  mClientId = %d",
           mRingBuf.pBufBase, mClientId);
 }
 

@@ -21,6 +21,7 @@
 
 extern "C" {
 #include "MtkAudioSrc.h"
+#include "bli_exp.h"
 }
 
 #define INCALL_RINGBUFFERE_SIZE (0x20000)  // 128k BufferSizw

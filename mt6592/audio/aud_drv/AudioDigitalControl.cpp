@@ -4,10 +4,13 @@
 #include "AudioAfeReg.h"
 #include "audio_custom_exp.h"
 #include <linux/fm.h>
+
+#ifdef HAVE_DFO
 #include <DfoDefines.h>
+#endif
 
 #define LOG_TAG "AudioDigitalControl"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0  // just don't use xlog
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
@@ -30,6 +33,11 @@
 #else
 #include <utils/Log.h>
 #endif
+
+// duplicate with AudioType.h
+#define MTK_ENABLE_MD5 true
+#define MTK_ENABLE_MD1 true
+#define MTK_ENABLE_MD2 true
 
 
 namespace android

@@ -144,7 +144,7 @@ class AudioMTKHardware : public android_audio_legacy::AudioHardwareBase
         {
             return ((mode == AUDIO_MODE_IN_CALL)
                     || (mode == AUDIO_MODE_IN_CALL_2)
-                    || (mode == AUDIO_MODE_IN_CALL_EXTERNAL)
+                    // || (mode == AUDIO_MODE_IN_CALL_EXTERNAL)  - won't compile
                     || (mode == AUDIO_MODE_IN_COMMUNICATION));
         }
         /** returns true if a telephony or VoIP call is in progress */

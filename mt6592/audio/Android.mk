@@ -102,10 +102,10 @@ LOCAL_C_INCLUDES:= \
     bionic/libc/kernel/common \
     $(call include-path-for, audio-utils) \
 	$(call include-path-for, audio-effects) \
-    hardware/mediatek/common/audio/include \
     hardware/mediatek/common/audio/V2/aud_drv \
     hardware/mediatek/common/audio/V2/include \
     hardware/mediatek/common/audio/V2 \
+    hardware/mediatek/common/audio/include \
     hardware/mediatek/mt6592/audio/include \
     mediatek-min/external/nvram/libnvram \
     mediatek-min/external/AudioCompensationFilter \
@@ -135,7 +135,7 @@ ifeq ($(EVDO_DT_SUPPORT),yes)
     $(MTK_PATH_PLATFORM)/kernel/core/include
 endif
 LOCAL_SRC_FILES+= \
-    $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioMTKDcRemoval.cpp \
+    $(LOCAL_COMMON_PATH)/audio/MtkAudioSrc.cpp \
     $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioMTKHeadsetMessager.cpp \
     $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioUtility.cpp \
     $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioFtmBase.cpp \
@@ -156,14 +156,10 @@ LOCAL_SRC_FILES+= \
     $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioVUnlockDL.cpp \
     $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioBTCVSDControl.cpp \
     $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioMTKFilter.cpp \
-    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/WCNChipController.cpp \
-    $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioFMController.cpp \
     $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioMATVController.cpp \
     $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechDriverFactory.cpp \
     $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechDriverDummy.cpp \
     $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechDriverLAD.cpp \
-    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechMessengerCCCI.cpp \
-    $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechMessengerEEMCS.cpp \
     $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechEnhancementController.cpp \
     $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechBGSPlayer.cpp \
     $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechPcm2way.cpp \
@@ -182,14 +178,21 @@ LOCAL_SRC_FILES+= \
     aud_drv/AudioMTKStreamOut.cpp \
     aud_drv/AudioMTKVolumeController.cpp \
     aud_drv/AudioResourceManager.cpp \
-    aud_drv/AudioFMResourceManager.cpp \
-    aud_drv/AudioMATVResourceManager.cpp \
     aud_drv/AudioFtm.cpp \
     aud_drv/AudioParamTuning.cpp \
     aud_drv/AudioLoopbackController.cpp \
     aud_drv/LoopbackManager.cpp \
     speech_driver/SpeechPhoneCallController.cpp \
     speech_driver/SpeechLoopbackController.cpp
+
+    # $(LOCAL_COMMON_PATH)/audio/aud_drv/AudioMTKDcRemoval.cpp
+    # $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/WCNChipController.cpp
+    # $(LOCAL_COMMON_PATH)/audio/V2/aud_drv/AudioFMController.cpp
+    # $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechMessengerCCCI.cpp
+    # $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechMessengerEEMCS.cpp
+    # aud_drv/AudioFMResourceManager.cpp
+    # aud_drv/AudioMATVResourceManager.cpp
+
 ifeq ($(EVDO_DT_SUPPORT),yes)    	
     LOCAL_SRC_FILES += $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechDriverEVDO.cpp \
                         $(LOCAL_COMMON_PATH)/audio/V2/speech_driver/SpeechMessengerEVDO.cpp

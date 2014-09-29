@@ -19,8 +19,11 @@
 //#endif
 
 extern "C" {
-#include  "MtkAudioSrc.h"
+/* closed-source things
 #include  "MtkAudioBitConverter.h"
+*/
+#include  "MtkAudioSrc.h"
+#include "bli_exp.h"
 }
 
 
@@ -265,6 +268,7 @@ class AudioMTKStreamOut : public android_audio_legacy::AudioStreamOut
 
         AudioMTKFilterManager    *mFilters;
 
+/*
         MtkAudioBitConverter *mShifter_to_1_15;
         MtkAudioBitConverter *mShifter_to_hw;
         MtkAudioBitConverter *mShifter_to_echoref;
@@ -274,6 +278,7 @@ class AudioMTKStreamOut : public android_audio_legacy::AudioStreamOut
         char *buffer_to_hw;
         char *buffer_to_echoref;
         MtkAudioBitConverter *mShifter_to_1_31_VIBSPK;
+*/
 
         //#if defined(MTK_VIBSPK_SUPPORT)
         AudioVIBSPKControl *mVibSpk;

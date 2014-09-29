@@ -15,6 +15,9 @@
 
 #include "AudioPreProcess.h"
 
+#include "MtkAudioSrc.h"
+
+
 #define STREAM_IN_DEFAULT_BUFFER_SIZE (0x2000)
 
 namespace android

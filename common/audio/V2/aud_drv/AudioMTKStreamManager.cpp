@@ -1,4 +1,7 @@
 #include <utils/String16.h>
+
+#define LOG_TAG "AudioMTKStreamManager"
+
 #include "AudioMTKStreamManager.h"
 #include "AudioUtility.h"
 #include "AudioMTKStreamOut.h"
@@ -6,16 +9,18 @@
 #include "AudioMTKStreamInManager.h"
 #include "AudioCompFltCustParam.h"
 
-#define LOG_TAG "AudioMTKStreamManager"
-#ifndef ANDROID_DEFAULT_CODE
+// #ifndef ANDROID_DEFAULT_CODE
+#if 0  // just don't use xlog
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
 #endif
 #ifdef ALOGW
 #undef ALOGW
-#endif ALOGI
+#endif
+#ifdef ALOGI
 #undef ALOGI
+#endif
 #ifdef ALOGD
 #undef ALOGD
 #endif
@@ -377,7 +382,9 @@ status_t AudioMTKStreamManager::UpdateACFHCF(int value)
         }
         else if (value == 2)
         {
-            ALOGD("setParameters Update ACFSub Parames");
+            // ALOGD("setParameters Update ACFSub Parames");
+            ALOGW("setParameters Update ACFSub Parames UNSUPPORTED");
+#if 0
             GetAudioCompFltCustParamFromNV(AUDIO_COMP_FLT_AUDIO_SUB, &sACFHCFParam);
             pTempOut->StreamOutCompFltPreviewParameter(AUDIO_COMP_FLT_AUDIO_SUB, (void *)&sACFHCFParam, sizeof(AUDIO_ACF_CUSTOM_PARAM_STRUCT));
 
@@ -386,6 +393,7 @@ status_t AudioMTKStreamManager::UpdateACFHCF(int value)
                 pTempOut->SetStreamOutCompFltStatus(AUDIO_COMP_FLT_AUDIO, false);
                 pTempOut->SetStreamOutCompFltStatus(AUDIO_COMP_FLT_AUDIO, true);
             }
+#endif
         }
     }
     return NO_ERROR;

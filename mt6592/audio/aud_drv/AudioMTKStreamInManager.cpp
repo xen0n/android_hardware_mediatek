@@ -1,3 +1,5 @@
+#define LOG_TAG "AudioMTKStreamInManager"
+
 #include "AudioMTKStreamInManager.h"
 #include "AudioResourceManager.h"
 #include "AudioResourceFactory.h"
@@ -20,17 +22,16 @@
 #include <mtk_tfa98xx_interface.h>
 #endif
 
-#include "WCNChipController.h"
-#include "AudioFMController.h"
+//#include "WCNChipController.h"
+//#include "AudioFMController.h"
 #include "AudioMATVController.h"
 
 extern "C" {
 #include  "MtkAudioSrc.h"
-#include  "MtkAudioBitConverter.h"
+//#include  "MtkAudioBitConverter.h"
 }
 
-#define LOG_TAG "AudioMTKStreamInManager"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0  // just don't use xlog
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
@@ -731,6 +732,7 @@ status_t  AudioMTKStreamInManager::Do_input_standby(AudioMTKStreamInClient *Clie
                     }
                     break;
 
+#if 0
                 case AudioDigitalType::MEM_DAI:
                     if (WCNChipController::GetInstance()->BTUseCVSDRemoval() != true)
                     {
@@ -751,6 +753,7 @@ status_t  AudioMTKStreamInManager::Do_input_standby(AudioMTKStreamInClient *Clie
                         mDAIThread.clear();
                     }
                     break;
+#endif
 
                 case AudioDigitalType::MEM_AWB:
                     AudioOut1 = AudioDigitalType::O05;
@@ -817,7 +820,7 @@ status_t  AudioMTKStreamInManager::Do_input_standby(AudioMTKStreamInClient *Clie
                     case AudioDigitalType::I2S_IN_2:
                         AudioIn1 = AudioDigitalType::I00;
                         AudioIn2 = AudioDigitalType::I01;
-
+#if 0
                         if (AudioFMController::GetInstance()->GetFmEnable() == false &&
                             AudioMATVController::GetInstance()->GetMatvEnable() == false) // Note: FM & mATV will disable 2nd I2S when FM/mATV disabled
                         {
@@ -825,15 +828,17 @@ status_t  AudioMTKStreamInManager::Do_input_standby(AudioMTKStreamInClient *Clie
                             mAudioDigital->SetI2SASRCConfig(false, 0); // Setting to bypass ASRC
                             mAudioDigital->Set2ndI2SInEnable(false);
                         }
+#endif
                         break;
                     case AudioDigitalType::MRG_I2S_IN:
                         AudioIn1 = AudioDigitalType::I15;
                         AudioIn2 = AudioDigitalType::I16;
-
+#if 0
                         if (AudioFMController::GetInstance()->GetFmEnable() == false) // Note: FM will disable 2nd I2S when FM disabled
                         {
                             mAudioDigital->SetMrgI2SEnable(false, 0);
                         }
+#endif
                         break;
 #ifdef EXTCODEC_ECHO_REFERENCE_SUPPORT
                     case AudioDigitalType::MEM_DL1: //echo reference disconnect
@@ -859,7 +864,7 @@ status_t  AudioMTKStreamInManager::Do_input_standby(AudioMTKStreamInClient *Clie
         }
         case AUDIO_MODE_IN_CALL:
         case AUDIO_MODE_IN_CALL_2:
-        case AUDIO_MODE_IN_CALL_EXTERNAL:
+        // case AUDIO_MODE_IN_CALL_EXTERNAL:
         {
             StopModemRecord();
             break;
@@ -1064,6 +1069,7 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
                     else
 #endif
                     {
+#if 0
                         if (AudioFMController::GetInstance()->GetFmEnable() == false &&
                             AudioMATVController::GetInstance()->GetMatvEnable() == false) // Note: FM & mATV will enable 2nd I2S when FM/mATV enabled
                         {
@@ -1086,16 +1092,18 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
                             // Enable 2nd I2S In
                             mAudioDigital->Set2ndI2SInEnable(true);
                         }
+#endif
                     }
                     break;
                 case AudioDigitalType::MRG_I2S_IN:
                     AudioIn1 = AudioDigitalType::I15;
                     AudioIn2 = AudioDigitalType::I16;
-
+#if 0
                     if (AudioFMController::GetInstance()->GetFmEnable() == false) // Note: FM will enable Mrg I2S when FM enabled
                     {
                         mAudioDigital->SetMrgI2SEnable(true, Client->mAttributeClient->mSampleRate);
                     }
+#endif
                     break;
 #if 0
                 case AudioDigitalType::DAI_BT:
@@ -1153,7 +1161,7 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
                         mBliHandlerDAIBT = new MtkAudioSrc(sample_rate, 1, Client->mAttributeClient->mSampleRate, 2, SRC_IN_Q1P15_OUT_Q1P15);
                         mBliHandlerDAIBT->Open();
 
-                        ALOGD("Do_input_start MEM_DAI mBliHandlerDAIBT=0x%x", mBliHandlerDAIBT);
+                        ALOGD("Do_input_start MEM_DAI mBliHandlerDAIBT=%p", mBliHandlerDAIBT);
                         mBliOutputBufferDAIBT = new char[BliOutBufferSizeDAIBT]; // buffer for blisrc out
                         ASSERT(mBliOutputBufferDAIBT != NULL);
                         ALOGD("Do_input_start MEM_DAI create mBliHandlerDAIBT");
@@ -1162,6 +1170,7 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
                     {
                         ALOGD("Do_input_start MEM_DAI mBliHandlerDAIBT existed!!!");
                     }
+#if 0
                     if (WCNChipController::GetInstance()->BTUseCVSDRemoval() != true)
                     {
                         AudioOut1 = AudioDigitalType::O11;
@@ -1172,6 +1181,7 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
                         MemIfChannel = 1;
                         ALOGD("!!!Do_input_start MEM_DAI MemIfChannel=1");
                     }
+#endif
                     break;
 
                 case AudioDigitalType::MEM_AWB:
@@ -1231,8 +1241,8 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
             {
                 bool bActivateAudMem = false;
                 ALOGD("checkMemInUse Start memtype = %d", Client->mMemDataType);
-                if ((Client->mMemDataType != AudioDigitalType::MEM_DAI) ||
-                    (WCNChipController::GetInstance()->BTUseCVSDRemoval() != true))
+                if ((Client->mMemDataType != AudioDigitalType::MEM_DAI) /* ||
+                    (WCNChipController::GetInstance()->BTUseCVSDRemoval() != true) */)
                 {
                     bActivateAudMem = true;
                 }
@@ -1261,6 +1271,7 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
             if (IrqStatus.mStatus == false)
             {
                 ALOGD("SetIrqMcuSampleRate mSampleRate = %d", Client->mAttributeClient->mSampleRate);
+#if 0
                 if (WCNChipController::GetInstance()->BTUseCVSDRemoval() != true)
                 {
 #ifdef EXTCODEC_ECHO_REFERENCE_SUPPORT
@@ -1290,6 +1301,7 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
                     }
                 }
                 else
+#endif
                 {
                     ALOGD("Do_input_start SetIrqMcuSampleRate , Client->mMemDataType=%d", Client->mMemDataType);
                     if (Client->mMemDataType != AudioDigitalType::MEM_DAI)
@@ -1343,8 +1355,8 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
             // set interconnection
             if (!checkMemInUse(Client))
             {
-                if ((Client->mMemDataType != AudioDigitalType::MEM_DAI) ||
-                    (WCNChipController::GetInstance()->BTUseCVSDRemoval() != true))
+                if ((Client->mMemDataType != AudioDigitalType::MEM_DAI) /* ||
+                    (WCNChipController::GetInstance()->BTUseCVSDRemoval() != true) */)
 
                 {
                     mAudioDigital->SetinputConnection(AudioDigitalType::Connection, AudioIn1, AudioOut1);
@@ -1372,7 +1384,7 @@ status_t  AudioMTKStreamInManager:: Do_input_start(AudioMTKStreamInClient *Clien
         }
         case AUDIO_MODE_IN_CALL:
         case AUDIO_MODE_IN_CALL_2:
-        case AUDIO_MODE_IN_CALL_EXTERNAL:
+        // case AUDIO_MODE_IN_CALL_EXTERNAL:
         {
             StartModemRecord(Client);
             break;
@@ -1558,6 +1570,7 @@ AudioMTKStreamInManager::AudioMTkRecordThread::AudioMTkRecordThread(AudioMTKStre
     char Buf[10];
     sprintf(Buf, "%d.pcm", DumpFileNum);
 
+#if 0
     if (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true)
     {
 #if !defined(EXTMD_LOOPBACK_TEST) //use VoIP to test. remark this to avoid VoIP MTKRecordThread controls AFE and kernel since they are controller by ExtMd threads
@@ -1579,6 +1592,7 @@ AudioMTKStreamInManager::AudioMTkRecordThread::AudioMTkRecordThread(AudioMTKStre
         }
 #endif
     }
+#endif
 
     switch (mMemType)
     {
@@ -1596,12 +1610,14 @@ AudioMTKStreamInManager::AudioMTkRecordThread::AudioMTkRecordThread(AudioMTKStre
             DumpFileName.append((const char *)Buf);
             mPDAIInPCMDumpFile = NULL;
             mPDAIInPCMDumpFile = AudioOpendumpPCMFile(DumpFileName, streamin_propty);
+#if 0
             if (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true)
             {
 #if !defined(EXTMD_LOOPBACK_TEST)
                 mAudioBTCVSDControl->BT_SCO_RX_Begin(mFd2);
 #endif
             }
+#endif
             break;
         case AudioDigitalType::MEM_AWB:
             mName = String8("AudioMTkRecordThreadAWB");
@@ -1649,6 +1665,7 @@ AudioMTKStreamInManager::AudioMTkRecordThread::~AudioMTkRecordThread()
 
     if (mMemType == AudioDigitalType::MEM_DAI)
     {
+#if 0
         if (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true)
         {
             mAudioBTCVSDControl->BT_SCO_RX_End(mFd2);
@@ -1659,6 +1676,7 @@ AudioMTKStreamInManager::AudioMTkRecordThread::~AudioMTkRecordThread()
                 mFd2 = 0;
             }
         }
+#endif
     }
     else
         // do thread exit routine
@@ -1824,7 +1842,7 @@ bool AudioMTKStreamInManager::AudioMTkRecordThread::threadLoop()
 
     while (!(exitPending() == true))
     {
-        if ((WCNChipController::GetInstance()->BTUseCVSDRemoval() == true) && (mMemType == AudioDigitalType::MEM_DAI))
+        if (/* (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true) && */ (mMemType == AudioDigitalType::MEM_DAI))
         {
 #if defined(__MSBC_CODEC_SUPPORT__)
             if (mAudioBTCVSDControl->BT_SCO_isWideBand())

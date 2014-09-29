@@ -1,3 +1,5 @@
+#define LOG_TAG "AudioMTKHardware"
+
 #include "AudioMTKHardware.h"
 #include "AudioVolumeFactory.h"
 #include "AudioAnalogControlFactory.h"
@@ -11,9 +13,9 @@
 
 #include "LoopbackManager.h"
 
-#include "AudioFMController.h"
+//#include "AudioFMController.h"
 #include "AudioMATVController.h"
-#include "WCNChipController.h"
+//#include "WCNChipController.h"
 #include "audio_custom_exp.h"
 
 #ifdef USING_TFA9887_EXTAMP
@@ -31,20 +33,23 @@ extern "C" {
 #include <binder/IServiceManager.h>
 #include <media/IAudioPolicyService.h>
 #include <AudioMTKPolicyManager.h>
+
+#ifdef HAVE_DFO
+// mt6572_x201/vendor/mediatek/banyan_addon/artifacts/out/target/product/banyan_addon/obj/include/dfo/DfoDefines.h
 #include <DfoDefines.h>
+#endif
 
 #ifdef MTK_AUDIO_HD_REC_SUPPORT
 #include "AudioCustParam.h"
 #endif
 #include "AudioVUnlockDL.h"
 
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
 #include "AudioVIBSPKControl.h"
-//#endif
+#endif
 
 
-#define LOG_TAG "AudioMTKHardware"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0  // just don't use xlog
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
@@ -918,8 +923,9 @@ status_t AudioMTKHardware::SetInputSuspend(bool bEnable)
 bool AudioMTKHardware::ModeInCall(audio_mode_t mode)
 {
     return (mode == AUDIO_MODE_IN_CALL ||
-            mode == AUDIO_MODE_IN_CALL_2 ||
-            mode == AUDIO_MODE_IN_CALL_EXTERNAL);
+            // mode == AUDIO_MODE_IN_CALL_2 ||
+            // mode == AUDIO_MODE_IN_CALL_EXTERNAL);
+            mode == AUDIO_MODE_IN_CALL_2);
 }
 
 bool AudioMTKHardware::ModeEnterCall(audio_mode_t Mode)
@@ -1002,6 +1008,9 @@ status_t AudioMTKHardware::setMode(int NewMode)
             new_mode = AUDIO_MODE_IN_CALL_EXTERNAL;
         }
 #endif
+#if 0
+        // no AUDIO_MODE_IN_CALL_EXTERNAL, but since MD1 and MD2 are both
+        // enabled, this is dead code anyway.
         if (new_mode == AUDIO_MODE_IN_CALL)
         {
             if (MTK_ENABLE_MD5 == true)
@@ -1010,6 +1019,7 @@ status_t AudioMTKHardware::setMode(int NewMode)
                 new_mode = AUDIO_MODE_IN_CALL_EXTERNAL;
             }
         }
+#endif
         if (new_mode == AUDIO_MODE_IN_CALL)
         {
             ALOGE("There is no modem 1 & modem_x in this project!! Just bypass AUDIO_MODE_IN_CALL!!");

@@ -36,7 +36,10 @@
 extern "C" {
 #include "MtkAudioSrc.h"
 #include "cvsd_codec_exp.h"
+
+#if defined(__MSBC_CODEC_SUPPORT__)
 #include "msbc_codec_exp.h"
+#endif
 }
 
 namespace android

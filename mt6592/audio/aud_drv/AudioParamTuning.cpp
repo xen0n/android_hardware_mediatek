@@ -960,7 +960,7 @@ status_t AudioParamTuning::enableModemPlaybackVIASPHPROC(bool bEnable, bool bWB)
 
         mAudioResourceManager->setUlInputDevice(AUDIO_DEVICE_IN_BUILTIN_MIC);
         // pretend to be phone call state
-		mAudioResourceManager->SetAudioMode((mSpeechDriverFactory->GetActiveModemIndex() == MODEM_1) ? AUDIO_MODE_IN_CALL : ((mSpeechDriverFactory->GetActiveModemIndex() == MODEM_2) ? AUDIO_MODE_IN_CALL_2 : AUDIO_MODE_IN_CALL_EXTERNAL));
+		mAudioResourceManager->SetAudioMode((mSpeechDriverFactory->GetActiveModemIndex() == MODEM_1) ? AUDIO_MODE_IN_CALL : AUDIO_MODE_IN_CALL_2 /*((mSpeechDriverFactory->GetActiveModemIndex() == MODEM_2) ? AUDIO_MODE_IN_CALL_2 : AUDIO_MODE_IN_CALL_EXTERNAL)*/);
         switch (mMode)
         {
             case SPEECH_MODE_NORMAL:

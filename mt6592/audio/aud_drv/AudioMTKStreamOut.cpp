@@ -1,3 +1,6 @@
+#define LOG_TAG  "AudioMTKStreamOut"
+
+#include "AudioType.h"
 #include "AudioMTKStreamOut.h"
 #include "AudioResourceFactory.h"
 #include "AudioResourceManagerInterface.h"
@@ -13,7 +16,7 @@
 #include "AudioFMController.h"
 #include "AudioMATVController.h"
 
-#include "WCNChipController.h"
+//#include "WCNChipController.h"
 
 #include "audio_custom_exp.h"
 #include "AudioVUnlockDL.h"
@@ -38,16 +41,17 @@
 #define HAL_BUFFER_SIZE (4096)
 #endif
 
-#define LOG_TAG  "AudioMTKStreamOut"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0  // just don't use xlog
 #include <cutils/xlog.h>
 #ifdef ALOGE
-#undef ALOGE2
+#undef ALOGE
 #endif
 #ifdef ALOGW
 #undef ALOGW
-#endif ALOGI
+#endif
+#ifdef ALOGI
 #undef ALOGI
+#endif
 #ifdef ALOGD
 #undef ALOGD
 #endif
@@ -80,10 +84,10 @@ AudioMTKStreamOut::AudioMTKStreamOut()
     ALOGD("+AudioMTKStreamOut default constructor");
     mPDacPCMDumpFile = NULL;
     mPFinalPCMDumpFile = NULL;
-    //#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
     mVIBsignalDumpFile = NULL;
     mLoudNotchDumpFile = NULL;
-    //#endif
+#endif
 
     mSteroToMono = false;
     mForceStandby = false;
@@ -121,10 +125,10 @@ AudioMTKStreamOut::AudioMTKStreamOut(uint32_t devices, int *format, uint32_t *ch
 
     mPDacPCMDumpFile = NULL;
     mPFinalPCMDumpFile = NULL;
-    //#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
     mVIBsignalDumpFile = NULL;
     mLoudNotchDumpFile = NULL;
-    //#endif
+#endif
     DumpFileNum = 0;
     // here open audio hardware for register setting
     mFd = ::open(kAudioDeviceName, O_RDWR);
@@ -206,7 +210,7 @@ AudioMTKStreamOut::AudioMTKStreamOut(uint32_t devices, int *format, uint32_t *ch
     }
     calInterrupttime();
 
-    //#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
     mVibSpk      = AudioVIBSPKControl::getInstance();
     mVibSpkFreq = AudioFtm::getInstance()->GetVibSpkCalibrationStatus();
     ALOGD("VibSpkReadFrequency:%x", mVibSpkFreq);
@@ -217,7 +221,7 @@ AudioMTKStreamOut::AudioMTKStreamOut(uint32_t devices, int *format, uint32_t *ch
     }
     mVibSpk->setParameters(44100, mVibSpkFreq, MOD_FREQ, DELTA_FREQ);
     mVibSpkEnable = false;
-    //#endif
+#endif
 
     mBliSrc = new BliSrc();
     ASSERT(mBliSrc != NULL);
@@ -247,6 +251,7 @@ AudioMTKStreamOut::AudioMTKStreamOut(uint32_t devices, int *format, uint32_t *ch
 
 
     //====== BitConvertor Setup ======
+#if 0
     mShifter_to_1_15 = NULL;
     mShifter_to_hw = NULL;
     mShifter_to_echoref = NULL;
@@ -275,6 +280,7 @@ AudioMTKStreamOut::AudioMTKStreamOut(uint32_t devices, int *format, uint32_t *ch
         mShifter_to_1_31_VIBSPK = new MtkAudioBitConverter(mDL1Attribute->mSampleRate, mDL1Attribute->mChannels, BCV_IN_Q1P15_OUT_Q1P31);
         mShifter_to_1_31_VIBSPK->Open();
     }
+#endif
 
 
     //=================================
@@ -349,11 +355,13 @@ AudioMTKStreamOut::~AudioMTKStreamOut()
         mSwapBufferVoIP = NULL;
     }
 
+#if 0
     if (buffer_1_15)
     {
         delete []buffer_1_15;
         buffer_1_15 = NULL;
     }
+#endif
 
     if (mFd2 > 0)
     {
@@ -487,6 +495,7 @@ status_t AudioMTKStreamOut::Set2ndI2SOut(bool bEnable)
     return NO_ERROR;
 }
 
+#if 0
 status_t AudioMTKStreamOut::SetDAIBTAttribute()
 {
     if (WCNChipController::GetInstance()->IsBTMergeInterfaceSupported() == true)
@@ -507,6 +516,7 @@ status_t AudioMTKStreamOut::SetDAIBTAttribute()
     mAudioDigitalControl->SetDAIBBT(mDaiBt);
     return NO_ERROR;
 }
+#endif
 
 status_t AudioMTKStreamOut::SetDAIBTOut(bool bEnable)
 {
@@ -786,7 +796,7 @@ bool AudioMTKStreamOut::NeedAFEDigitalAnalogControl(uint32 DigitalPart)
         return false;
     }
 
-    if ((WCNChipController::GetInstance()->BTUseCVSDRemoval() == true) &&
+    if (/* (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true) && */
         (DigitalPart == AudioDigitalType::DAI_BT)) //no need to enable IRQ1 , AFE, MemIntf, analogDev  in BTCVSD case
     {
         return false;
@@ -857,9 +867,11 @@ ssize_t AudioMTKStreamOut::write(const void *buffer, size_t bytes)
         SetStreamRunning(true);
         UpdateLine(__LINE__);
 
+#if 0
         if (mShifter_to_1_15) { mShifter_to_1_15->ResetBuffer(); }
         if (mShifter_to_hw) { mShifter_to_hw->ResetBuffer(); }
         if (mShifter_to_echoref) { mShifter_to_echoref->ResetBuffer(); }
+#endif
     }
 
     if (isBTCVSDTest)
@@ -901,6 +913,7 @@ ssize_t AudioMTKStreamOut::write(const void *buffer, size_t bytes)
         }
         mAudioResourceManager->DisableAudioLock(AudioResourceManagerInterface::AUDIO_HARDWARE_LOCK);
 
+#if 0
         int insize = bytes, outsize = SHIFTER_BUFFER_SIZE;
         if (mShifter_to_1_15)
         {            
@@ -911,6 +924,7 @@ ssize_t AudioMTKStreamOut::write(const void *buffer, size_t bytes)
             dumpPcm(mPFinalPCMDumpFile, buffer_1_15, outsize);
         }
         else
+#endif
         {
             dumpPcm(mPDacPCMDumpFile, outbuffer, bytes);
             WrittenBytes = pBGSPlayer->Write((void *)outbuffer, bytes);
@@ -939,7 +953,7 @@ ssize_t AudioMTKStreamOut::write(const void *buffer, size_t bytes)
             SetAnalogFrequency(DigitalPart);
             SetPlayBackPinmux();
 
-            if (isBTDevice && WCNChipController::GetInstance()->BTUseCVSDRemoval())
+            if (isBTDevice /* && WCNChipController::GetInstance()->BTUseCVSDRemoval() */)
             {
                 mAudioBTCVSDControl->BTCVSD_Init(mFd2, mSourceSampleRate, mSourceChannels);
                 mCVSDTXoutDumpFile = NULL;
@@ -959,6 +973,7 @@ ssize_t AudioMTKStreamOut::write(const void *buffer, size_t bytes)
 
         if (mPDacPCMDumpFile!=NULL)
         {
+#if 0
             int insize = bytes, outsize = SHIFTER_BUFFER_SIZE;    
             if (mShifter_to_1_15)
             {
@@ -966,6 +981,7 @@ ssize_t AudioMTKStreamOut::write(const void *buffer, size_t bytes)
                 dumpPcm(mPDacPCMDumpFile, buffer_1_15, outsize);
             }
             else
+#endif
             {
                 dumpPcm(mPDacPCMDumpFile, outbuffer, bytes);
             }
@@ -975,6 +991,7 @@ ssize_t AudioMTKStreamOut::write(const void *buffer, size_t bytes)
         {
             int insize = bytes, outsize = SHIFTER_BUFFER_SIZE;
             UpdateLine(__LINE__);
+#if 0
             if (mShifter_to_1_15)
             {
                 mShifter_to_1_15->Process(outbuffer, (unsigned int *)&insize, buffer_1_15, (unsigned int *)&outsize);
@@ -982,6 +999,7 @@ ssize_t AudioMTKStreamOut::write(const void *buffer, size_t bytes)
                 WrittenBytes = insize;
             }
             else
+#endif
             {
                 WrittenBytes = WriteDataToBTSCOHW(outbuffer, bytes);
             }
@@ -1061,7 +1079,8 @@ ssize_t AudioMTKStreamOut::write(const void *buffer, size_t bytes)
     {
         if (time[0] > 0.0045)
         {
-            aee_system_warning("AudioLowLatency", NULL, DB_OPT_FTRACE, "Underrun detected is streamout");
+            // aee_system_warning("AudioLowLatency", NULL, DB_OPT_FTRACE, "Underrun detected is streamout");
+            ALOGW("Underrun detected in streamout");
         }
     }
     return WrittenBytes;
@@ -1075,6 +1094,7 @@ ssize_t AudioMTKStreamOut::WriteDataToBTSCOHW(const void *buffer, size_t bytes)
     uint32_t insize, outsize, workbufsize, total_outsize, src_fs_s, original_insize;
     original_insize = bytes;
 
+#if 0
     if (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true)
     {
         inbuf = (uint8_t *)buffer;
@@ -1134,6 +1154,7 @@ ssize_t AudioMTKStreamOut::WriteDataToBTSCOHW(const void *buffer, size_t bytes)
         return original_insize;
     }
     else
+#endif
     {
         outputSize = DoBTSCOSRC(buffer, bytes, (void **)&outbuffer);
         WrittenBytes =::write(mFd, outbuffer, outputSize);
@@ -1238,6 +1259,7 @@ status_t AudioMTKStreamOut::standby()
                 
                 uint32 DigitalPart = mAudioDigitalControl->DlPolicyByDevice(mAudioResourceManager->getDlOutputDevice());
 
+#if 0
                 if (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true)
                 {
                     if (NeedToDoBTSCOProcess(DigitalPart))
@@ -1267,6 +1289,7 @@ status_t AudioMTKStreamOut::standby()
                     }
                 }
                 else
+#endif
                 {
                     TurnOffAfeDigital(DigitalPart, AudioFMController::GetInstance()->GetFmEnable() || AudioMATVController::GetInstance()->GetMatvEnable());
                     SetMEMIFEnable(AudioDigitalType::MEM_DL1, false); // disable irq 1
@@ -1287,7 +1310,7 @@ status_t AudioMTKStreamOut::standby()
 
             case AUDIO_MODE_IN_CALL:
             case AUDIO_MODE_IN_CALL_2:
-            case AUDIO_MODE_IN_CALL_EXTERNAL:
+            // case AUDIO_MODE_IN_CALL_EXTERNAL:
             {
                 SpeechDriverInterface *pSpeechDriver = SpeechDriverFactory::GetInstance()->GetSpeechDriver();
                 BGSPlayer *pBGSPlayer = BGSPlayer::GetInstance();
@@ -2129,6 +2152,7 @@ size_t AudioMTKStreamOut::WriteDataToAudioHW(const void *buffer, size_t bytes)
     //============== Audio AFE  ================
     int outputSize_hw = outputSize;
     char *buffer_hw_ptr = NULL;
+#if 0
     if (mShifter_to_hw)
     {
         int in_size = outputSize;
@@ -2138,6 +2162,7 @@ size_t AudioMTKStreamOut::WriteDataToAudioHW(const void *buffer, size_t bytes)
         buffer_hw_ptr = (char *)buffer_hw;
     }
     else
+#endif
     {
         buffer_hw_ptr = (char *)outbuffer;
     }
@@ -2170,6 +2195,7 @@ size_t AudioMTKStreamOut::WriteDataToAudioHW(const void *buffer, size_t bytes)
     char *buffer_echoref_ptr = NULL;
     int outputSize_echoref = outputSize;
 
+#if 0
     if (mShifter_to_echoref)
     {
         int in_size = outputSize;
@@ -2178,6 +2204,7 @@ size_t AudioMTKStreamOut::WriteDataToAudioHW(const void *buffer, size_t bytes)
         buffer_echoref_ptr = (char *)buffer_echoref;
     }
     else
+#endif
     {
         buffer_echoref_ptr = (char *)outbuffer;
     }
@@ -2272,7 +2299,7 @@ void AudioMTKStreamOut::BTCVSD_ExtMDLoopBackTest_Stadby(void)
 }
 #endif
 
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
 const int32_t AUD_VIBR_FILTER_COEF_Table[VIBSPK_FILTER_NUM][2][6][3] =
 {
     DEFAULT_AUD_VIBR_LOUDNESS_FILTER_COEF_141,
@@ -2348,7 +2375,9 @@ status_t AudioMTKStreamOut::SetVibSpkDefaultParam()
     memcpy(&cali_param.bes_loudness_bpf_coeff, &AUD_VIBR_FILTER_COEF_Table[(VIBSPK_DEFAULT_FREQ - VIBSPK_FREQ_LOWBOUND + 1) / VIBSPK_FILTER_FREQSTEP], sizeof(uint32_t)*VIBSPK_AUD_PARAM_SIZE);
     cali_param.bes_loudness_WS_Gain_Min = VIBSPK_DEFAULT_FREQ;
     cali_param.bes_loudness_WS_Gain_Max = VIBSPK_SETDEFAULT_VALUE;
+#if defined(MTK_VIBSPK_SUPPORT)
     SetAudioCompFltCustParamToNV(AUDIO_COMP_FLT_VIBSPK, &cali_param);
+#endif
     ALOGD("[VibSpk] SetDefaultFreq");
     return NO_ERROR;
 }
@@ -2522,6 +2551,6 @@ size_t  AudioMTKStreamOut::DoVibSignal2DLProcess(void *outbuffer, void *vibtoneb
     return bytes;
 
 }
-//#endif
+#endif
 
 }

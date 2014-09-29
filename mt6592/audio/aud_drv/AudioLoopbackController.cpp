@@ -1,12 +1,13 @@
+#define LOG_TAG "AudioLoopbackController"
+
 #include "AudioLoopbackController.h"
 #include "AudioUtility.h"
 #include "AudioMTKStreamManager.h"
 
-#include "WCNChipController.h"
+//#include "WCNChipController.h"
 #include "audio_custom_exp.h"
 
-#define LOG_TAG "AudioLoopbackController"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
@@ -133,6 +134,7 @@ status_t AudioLoopbackController::OpenAudioLoopbackControlFlow(const audio_devic
     if (bt_device_on == true)
     {
         // DAIBT
+#if 0
         if (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true)
         {
             if (!mUseBtCodec)
@@ -165,6 +167,7 @@ status_t AudioLoopbackController::OpenAudioLoopbackControlFlow(const audio_devic
             }
         }
         else
+#endif
         {
             mAudioDigitalInstance->SetinputConnection(AudioDigitalType::Connection, AudioDigitalType::I02, AudioDigitalType::O02); // DAIBT_IN -> DAIBT_OUT
 
@@ -243,12 +246,14 @@ status_t AudioLoopbackController::OpenAudioLoopbackControlFlow(const audio_devic
 
     if (bt_device_on == true)
     {
+#if 0
         if (WCNChipController::GetInstance()->BTChipSamplingRate() == 0)
         {
             sample_rate = 8000;
 
         }
         else
+#endif
         {
             sample_rate = 16000;
         }
@@ -285,6 +290,7 @@ status_t AudioLoopbackController::CloseAudioLoopbackControlFlow()
 
     if (bt_device_on)
     {
+#if 0
         if (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true)
         {
             if (mBtLoopbackWithoutCodec)
@@ -315,6 +321,7 @@ status_t AudioLoopbackController::CloseAudioLoopbackControlFlow()
             }
         }
         else
+#endif
         {
             mAudioDigitalInstance->SetDAIBTEnable(false);
             mAudioDigitalInstance->SetinputConnection(AudioDigitalType::DisConnect, AudioDigitalType::I02, AudioDigitalType::O02); // DAIBT_IN -> DAIBT_OUT
@@ -421,19 +428,22 @@ status_t AudioLoopbackController::SetDAIBTAttribute(int sample_rate)
     AudioDigitalDAIBT daibt_attribute;
     memset((void *)&daibt_attribute, 0, sizeof(daibt_attribute));
 
+#if 0
     if (WCNChipController::GetInstance()->IsBTMergeInterfaceSupported() == true)
     {
         daibt_attribute.mUSE_MRGIF_INPUT = AudioDigitalDAIBT::FROM_MGRIF;
     }
     else
+#endif
     {
         daibt_attribute.mUSE_MRGIF_INPUT = AudioDigitalDAIBT::FROM_BT;
     }
+	ALOGW("WCNChipController disabled, init will be faulty!");
     daibt_attribute.mDAI_BT_MODE = (sample_rate == 8000) ? AudioDigitalDAIBT::Mode8K : AudioDigitalDAIBT::Mode16K;
     daibt_attribute.mDAI_DEL = AudioDigitalDAIBT::HighWord; // suggest always HighWord
-    daibt_attribute.mBT_LEN  = WCNChipController::GetInstance()->BTChipSyncLength();
+    // daibt_attribute.mBT_LEN  = WCNChipController::GetInstance()->BTChipSyncLength();
     daibt_attribute.mDATA_RDY = true;
-    daibt_attribute.mBT_SYNC = WCNChipController::GetInstance()->BTChipSyncFormat();
+    // daibt_attribute.mBT_SYNC = WCNChipController::GetInstance()->BTChipSyncFormat();
     daibt_attribute.mBT_ON = true;
     daibt_attribute.mDAIBT_ON = false;
     mAudioDigitalInstance->SetDAIBBT(&daibt_attribute);

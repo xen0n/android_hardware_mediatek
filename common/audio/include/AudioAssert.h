@@ -23,6 +23,7 @@ static int aee_system_warning(const char *module, const char* path, unsigned int
 #endif // end of HAVE_AEE_FEATURE
 
 
+#ifndef ASSERT
 #define ASSERT(exp) \
     do { \
         if (!(exp)) { \
@@ -30,13 +31,15 @@ static int aee_system_warning(const char *module, const char* path, unsigned int
             aee_system_exception("[Audio]", NULL, DB_OPT_DEFAULT, " %s, %uL", strrchr(__FILE__, '/') + 1, __LINE__); \
         } \
     } while(0)
+#endif
 
+#ifndef WARNING
 #define WARNING(string) \
     do { \
         ALOGW("WARNING("string") fail: \""  __FILE__ "\", %uL", __LINE__); \
         aee_system_warning("[Audio]", NULL, DB_OPT_DEFAULT, string); \
     } while(0)
-
+#endif
 
 
 #endif // end of ANDROID_AUDIO_ASSERT_H

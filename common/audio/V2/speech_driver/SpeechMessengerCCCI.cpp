@@ -1,3 +1,5 @@
+#define LOG_TAG "SpeechMessengerCCCI"
+
 #include <unistd.h>
 #include <string.h>
 
@@ -19,9 +21,7 @@
 #include "AudioMTKStreamInManager.h"
 #include "AudioResourceManager.h"
 
-#include "hardware/ccci_intf.h"
-
-#define LOG_TAG "SpeechMessengerCCCI"
+//#include "hardware/ccci_intf.h"
 
 #ifndef sph_msleep
 #define sph_msleep(ms) usleep((ms)*1000)
@@ -31,8 +31,14 @@ namespace android
 {
 
 /** CCCI driver & ioctl */
+static const char CCCI_PCM_RX_DEV[NUM_MODEM][32] = {"/dev/ccci_pcm_rx", "/dev/ccci2_pcm_rx", "/dev/ccci5_pcm_rx"};
+static const char CCCI_PCM_TX_DEV[NUM_MODEM][32] = {"/dev/ccci_pcm_tx", "/dev/ccci2_pcm_tx", "/dev/ccci5_pcm_tx"};
+
 /** CCCI ioctl */
-// defined in "hardware/ccci_intf.h"
+#define CCCI_IOC_MAGIC 'C'
+
+#define CCCI_IOC_GET_MODEM_STATE    _IOR(CCCI_IOC_MAGIC, 1, unsigned int)
+#define CCCI_IOC_SHARE_MEMORY_SIZE  _IOR(CCCI_IOC_MAGIC, 3, unsigned int)
 
 /** CCCI modem status */
 static const char MODEM_STATUS_NOT_RUN    = '0'; // Boot stage 0 -> Means MD Does NOT run
@@ -41,7 +47,7 @@ static const char MODEM_STATUS_READY      = '2'; // Boot stage 2 -> Means MD is 
 static const char MODEM_STATUS_EXCEPTION  = '3'; // MD exception -> Means EE occur
 
 /** Property keys*/
-static const char PROPERTY_KEY_MODEM_STATUS[NUM_MODEM][PROPERTY_KEY_MAX] = {"af.modem_1.status", "af.modem_2.status"};
+static const char PROPERTY_KEY_MODEM_STATUS[NUM_MODEM][PROPERTY_KEY_MAX] = {"af.modem_1.status", "af.modem_2.status", "af.modem_5.status"};
 
 
 /** CCCI channel No */

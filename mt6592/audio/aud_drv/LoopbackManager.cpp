@@ -1,3 +1,5 @@
+#define LOG_TAG "LoopbackManager"
+
 #include "LoopbackManager.h"
 
 #include <media/AudioSystem.h>
@@ -14,10 +16,11 @@
 #include "AudioDigitalControlFactory.h"
 #include "AudioMTKStreamManager.h"
 
+#ifdef HAVE_DFO
 #include <DfoDefines.h>
+#endif
 
-#define LOG_TAG "LoopbackManager"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE

@@ -12,17 +12,21 @@
 
 // #include <aee.h>
 
+#ifndef ASSERT
 #define ASSERT(exp) \
     do { \
         if (!(exp)) { \
             ALOGE("ASSERT("#exp") fail: \""  __FILE__ "\", %uL", __LINE__); \
         } \
     } while(0)
+#endif
 
+#ifndef WARNING
 #define WARNING(string) \
     do { \
         ALOGW("WARNING("string") fail: \""  __FILE__ "\", %uL", __LINE__); \
     } while(0)
+#endif
 
 
 #ifndef int8_t

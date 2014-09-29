@@ -1,3 +1,5 @@
+#define LOG_TAG "AudioSpeechEnhanceInfo"
+
 #include "AudioSpeechEnhanceInfo.h"
 #include <utils/Log.h>
 #include <utils/String16.h>
@@ -7,7 +9,6 @@
 #include <cutils/properties.h>
 #include "AudioCustParam.h"
 
-#define LOG_TAG "AudioSpeechEnhanceInfo"
 
 
 static const char PROPERTY_KEY_VOIP_SPH_ENH_MASKS[PROPERTY_KEY_MAX] = "persist.af.voip.sph_enh_mask";
@@ -151,6 +152,7 @@ bool AudioSpeechEnhanceInfo::SetForceMagiASR(bool enable)
 
 status_t AudioSpeechEnhanceInfo::GetForceMagiASRState()
 {
+#if 0
     status_t ret = 0;
     uint32_t feature_support = QueryFeatureSupportInfo();
 
@@ -173,6 +175,10 @@ status_t AudioSpeechEnhanceInfo::GetForceMagiASRState()
     }
 
     return ret;
+#else
+    // don't have QueryFeatureSupportInfo, just stub this out
+    return 0;
+#endif
 }
 
 bool AudioSpeechEnhanceInfo::SetForceAECRec(bool enable)
@@ -320,6 +326,7 @@ bool AudioSpeechEnhanceInfo::GetDynamicSpeechEnhancementMaskOnOff(const voip_sph
 
 void AudioSpeechEnhanceInfo::UpdateDynamicSpeechEnhancementMask(const voip_sph_enh_mask_struct_t &mask)
 {
+#if 0
     uint32_t feature_support = QueryFeatureSupportInfo();
 
     ALOGD("%s(), mask = %x, feature_support=%x, %x", __FUNCTION__, mask, feature_support, (feature_support & (SUPPORT_DMNR_3_0 | SUPPORT_VOIP_ENHANCE)));
@@ -346,11 +353,14 @@ void AudioSpeechEnhanceInfo::UpdateDynamicSpeechEnhancementMask(const voip_sph_e
     {
         ALOGD("%s(), not support", __FUNCTION__);
     }
-
+#else
+    ALOGD("%s(), STUB", __FUNCTION__);
+#endif
 }
 
 status_t AudioSpeechEnhanceInfo::SetDynamicVoIPSpeechEnhancementMask(const voip_sph_enh_dynamic_mask_t dynamic_mask_type, const bool new_flag_on)
 {
+#if 0
     //Mutex::Autolock lock(mHDRInfoLock);
     uint32_t feature_support = QueryFeatureSupportInfo();
 
@@ -385,6 +395,9 @@ status_t AudioSpeechEnhanceInfo::SetDynamicVoIPSpeechEnhancementMask(const voip_
     {
         ALOGW("%s(), not support", __FUNCTION__);
     }
+#else
+    ALOGW("%s(), STUB", __FUNCTION__);
+#endif
 
     return NO_ERROR;
 }

@@ -1,3 +1,5 @@
+#define LOG_TAG "SpeechDriverLAD"
+
 #include "SpeechDriverLAD.h"
 #include "SpeechMessengerCCCI.h"
 #include "SpeechMessengerEEMCS.h"
@@ -10,14 +12,13 @@
 #include "AudioCustParam.h"
 #include <hardware_legacy/power.h>
 
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
 #include "AudioCompFltCustParam.h"
 #include "AudioVIBSPKControl.h"
-//#endif
+#endif
 
 #include <utils/threads.h>
 
-#define LOG_TAG "SpeechDriverLAD"
 
 namespace android
 {
@@ -941,7 +942,7 @@ status_t SpeechDriverLAD::SetWBSpeechParameters(const AUDIO_CUSTOM_WB_PARAM_STRU
 }
 #endif
 
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
 const int16_t SPH_VIBR_FILTER_COEF_Table[VIBSPK_FILTER_NUM][VIBSPK_SPH_PARAM_SIZE] =
 {
     DEFAULT_SPH_VIBR_FILTER_COEF_141,
@@ -1087,7 +1088,7 @@ status_t SpeechDriverLAD::SetVibSpkParam(void *eVibSpkParam)
     }
 
 }
-//#endif //defined(MTK_VIBSPK_SUPPORT)
+#endif //defined(MTK_VIBSPK_SUPPORT)
 
 typedef struct
 {
@@ -1182,14 +1183,14 @@ status_t SpeechDriverLAD::SetAllSpeechEnhancementInfoToModem()
     GetWBSpeechParamFromNVRam(&eSphParamWB);
     SetWBSpeechParameters(&eSphParamWB);
 #endif
-//#if defined(MTK_VIBSPK_SUPPORT)
+#if defined(MTK_VIBSPK_SUPPORT)
     if (IsAudioSupportFeature(AUDIO_SUPPORT_VIBRATION_SPEAKER))
     {
         PARAM_VIBSPK eVibSpkParam;
         GetVibSpkParam((void *)&eVibSpkParam);
         SetVibSpkParam((void *)&eVibSpkParam);
     }
-//#endif
+#endif
 
 #if defined(NXP_SMARTPA_SUPPORT)
     PARAM_NXP_SMARTPA eNxpSmartpaParam;

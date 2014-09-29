@@ -1,3 +1,5 @@
+#define LOG_TAG "AudioResourceManager"
+
 #include <utils/threads.h>
 
 #include "AudioType.h"
@@ -24,16 +26,18 @@ extern "C" {
 #ifdef EXTMD_LOOPBACK_TEST
 #include "AudioBTCVSDControl.h"
 #endif
-#define LOG_TAG "AudioResourceManager"
-#ifndef ANDROID_DEFAULT_CODE
+
+#if 0
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
 #endif
 #ifdef ALOGW
 #undef ALOGW
-#endif ALOGI
+#endif
+#ifdef ALOGI
 #undef ALOGI
+#endif
 #ifdef ALOGD
 #undef ALOGD
 #endif
@@ -865,7 +869,7 @@ status_t AudioResourceManager::StartOutputDevice()
         }
         case AUDIO_MODE_IN_CALL:
         case AUDIO_MODE_IN_CALL_2:
-        case AUDIO_MODE_IN_CALL_EXTERNAL:
+        // case AUDIO_MODE_IN_CALL_EXTERNAL:
         {
             TurnonAudioDeviceIncall(mDlOutputDevice);
             break;
@@ -893,7 +897,7 @@ status_t AudioResourceManager::StopOutputDevice()
         }
         case AUDIO_MODE_IN_CALL:
         case AUDIO_MODE_IN_CALL_2:
-        case AUDIO_MODE_IN_CALL_EXTERNAL:
+        // case AUDIO_MODE_IN_CALL_EXTERNAL:
         {
             TurnoffAudioDevice(mDlOutputDevice);
             break;
@@ -1125,7 +1129,7 @@ status_t AudioResourceManager::SetInputDeviceGain()
         }
         case AUDIO_MODE_IN_CALL:
         case AUDIO_MODE_IN_CALL_2:
-        case AUDIO_MODE_IN_CALL_EXTERNAL:
+        // case AUDIO_MODE_IN_CALL_EXTERNAL:
         {
             if (mDlOutputDevice == AUDIO_DEVICE_OUT_EARPIECE)
             {
@@ -1238,6 +1242,7 @@ status_t AudioResourceManager::StartInputDevice()
         ALOGV("%s(), 07mUlInputDevice = 0x%x, AUDIO_DEVICE_IN_BACK_MIC = 0x%x", __FUNCTION__, mUlInputDevice, AUDIO_DEVICE_IN_BACK_MIC);
         SelectInPutMicEnable(true);
     }
+#if 0
     else if (mUlInputDevice == (AUDIO_DEVICE_IN_FM))
     {
         ALOGV("%s(), 08mUlInputDevice = 0x%x, AUDIO_DEVICE_IN_FM = 0x%x", __FUNCTION__, mUlInputDevice, AUDIO_DEVICE_IN_FM);
@@ -1248,6 +1253,7 @@ status_t AudioResourceManager::StartInputDevice()
         ALOGV("%s(), 09mUlInputDevice = 0x%x, AUDIO_DEVICE_IN_MATV = 0x%x", __FUNCTION__, mUlInputDevice, AUDIO_DEVICE_IN_MATV);
         // TODO: mATV analog part
     }
+#endif
 
     SetInputDeviceGain();
     ALOGD("-StartInputDevice mUlInputDevice = 0x%x", mUlInputDevice);
@@ -1298,6 +1304,7 @@ status_t AudioResourceManager::StopInputDevice()
     {
         SelectInPutMicEnable(false);
     }
+#if 0
     else if (mUlInputDevice == AUDIO_DEVICE_IN_FM)
     {
         // TODO: FM analog part
@@ -1306,6 +1313,7 @@ status_t AudioResourceManager::StopInputDevice()
     {
         // TODO: mATV analog part
     }
+#endif
 
     return NO_ERROR;
 }
@@ -1336,8 +1344,8 @@ bool AudioResourceManager::IsWiredHeadsetOn()
 bool AudioResourceManager::IsModeIncall(void)
 {
     return (mAudioMode == AUDIO_MODE_IN_CALL ||
-            mAudioMode == AUDIO_MODE_IN_CALL_2 ||
-            mAudioMode == AUDIO_MODE_IN_CALL_EXTERNAL);
+            mAudioMode == AUDIO_MODE_IN_CALL_2);
+            // || mAudioMode == AUDIO_MODE_IN_CALL_EXTERNAL);
 }
 
 status_t AudioResourceManager::setParameters(int command1 , int command2 , unsigned int data)

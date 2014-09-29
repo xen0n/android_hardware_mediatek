@@ -1,3 +1,5 @@
+#define LOG_TAG "AudioFMResourceManager"
+
 #include "AudioFMResourceManager.h"
 
 #include "AudioMTKStreamManager.h"
@@ -5,7 +7,6 @@
 
 #include "WCNChipController.h"
 
-#define LOG_TAG "AudioFMResourceManager"
 
 namespace android
 {

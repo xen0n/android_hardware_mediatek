@@ -140,6 +140,7 @@ AudioStreamOut::~AudioStreamOut()
 {
 }
 
+/* nonexistent (closed-source) interface
 // default implementation is unsupported
 status_t AudioStreamOut::getNextWriteTimestamp(int64_t *timestamp)
 {
@@ -157,6 +158,7 @@ status_t AudioStreamOut::getPresentationPosition(uint64_t *frames, struct timesp
 {
     return INVALID_OPERATION;
 }
+*/
 
 
 AudioStreamIn::~AudioStreamIn() {}
@@ -212,6 +214,7 @@ status_t AudioHardwareBase::SetHCFPreviewParameter(void *ptr , int len)
 {
     return NO_ERROR;
 }
+/* nonexistent (closed-source) interface
 // for open output stream with flag
  AudioStreamOut* AudioHardwareBase::openOutputStreamWithFlag(
                                  uint32_t devices,
@@ -223,6 +226,7 @@ status_t AudioHardwareBase::SetHCFPreviewParameter(void *ptr , int len)
 {
     return openOutputStream(devices, format, channels, sampleRate, status);
 }
+*/
 /////////////////////////////////////////////////////////////////////////
 //    for PCMxWay Interface API ...
 /////////////////////////////////////////////////////////////////////////

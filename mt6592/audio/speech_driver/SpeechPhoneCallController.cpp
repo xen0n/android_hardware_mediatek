@@ -1,3 +1,5 @@
+#define LOG_TAG "SpeechPhoneCallController"
+
 #include "SpeechPhoneCallController.h"
 #include "AudioType.h"
 
@@ -11,11 +13,13 @@
 #include "SpeechPcm2way.h"
 #include "SpeechBGSPlayer.h"
 #include "SpeechVMRecorder.h"
+
+#ifdef HAVE_DFO
 #include <DfoDefines.h>
+#endif
 
-#include "WCNChipController.h"
+// #include "WCNChipController.h"
 
-#define LOG_TAG "SpeechPhoneCallController"
 
 
 // TODO(Andrew Hsu): MUST connect (DAIBT) <=> (MODEM_PCM_1 / MODEM_PCM_2) when next ECO!!
@@ -85,7 +89,7 @@ SpeechPhoneCallController::~SpeechPhoneCallController()
 
 bool SpeechPhoneCallController::IsModeIncall(const audio_mode_t audio_mode) const
 {
-    return (audio_mode == AUDIO_MODE_IN_CALL || audio_mode == AUDIO_MODE_IN_CALL_2  || audio_mode == AUDIO_MODE_IN_CALL_EXTERNAL);
+    return (audio_mode == AUDIO_MODE_IN_CALL || audio_mode == AUDIO_MODE_IN_CALL_2); // || audio_mode == AUDIO_MODE_IN_CALL_EXTERNAL);
 }
 
 
@@ -258,8 +262,8 @@ status_t SpeechPhoneCallController::CloseModemSpeechControlFlow(const audio_mode
 
     const modem_index_t modem_index = mSpeechDriverFactory->GetActiveModemIndex();
     ASSERT((modem_index == MODEM_1 && audio_mode == AUDIO_MODE_IN_CALL) ||
-           (modem_index == MODEM_2 && audio_mode == AUDIO_MODE_IN_CALL_2) ||
-           (modem_index == MODEM_EXTERNAL && audio_mode == AUDIO_MODE_IN_CALL_EXTERNAL));
+           (modem_index == MODEM_2 && audio_mode == AUDIO_MODE_IN_CALL_2));
+    //     || (modem_index == MODEM_EXTERNAL && audio_mode == AUDIO_MODE_IN_CALL_EXTERNAL));
 
     // check VM need close
     SpeechVMRecorder *pSpeechVMRecorder = SpeechVMRecorder::GetInstance();
@@ -356,8 +360,8 @@ status_t SpeechPhoneCallController::ChangeDeviceForModemSpeechControlFlow(const 
 
     const modem_index_t modem_index = mSpeechDriverFactory->GetActiveModemIndex();
     ASSERT((modem_index == MODEM_1 && audio_mode == AUDIO_MODE_IN_CALL) ||
-           (modem_index == MODEM_2 && audio_mode == AUDIO_MODE_IN_CALL_2) ||
-           (modem_index == MODEM_EXTERNAL && audio_mode == AUDIO_MODE_IN_CALL_EXTERNAL));
+           (modem_index == MODEM_2 && audio_mode == AUDIO_MODE_IN_CALL_2));
+    //     || (modem_index == MODEM_EXTERNAL && audio_mode == AUDIO_MODE_IN_CALL_EXTERNAL));
 
     // Get current active speech driver
     SpeechDriverInterface *pSpeechDriver = mSpeechDriverFactory->GetSpeechDriver();
@@ -502,12 +506,14 @@ status_t SpeechPhoneCallController::OpenModemSpeechDigitalPart(const modem_index
 
     if (bt_device_on == true)
     {
+#if 0
         if (WCNChipController::GetInstance()->BTChipSamplingRate() == 0)
         {
             sample_rate = 8000;
 
         }
         else
+#endif
         {
             sample_rate = 16000;
         }
@@ -521,7 +527,9 @@ status_t SpeechPhoneCallController::OpenModemSpeechDigitalPart(const modem_index
     {
         if (modem_index == MODEM_1)
         {
+#if 0
             if (WCNChipController::GetInstance()->BTUseCVSDRemoval() != true)
+#endif
             {
                 SetModemSpeechInterConnection(AudioDigitalType::DAI_BT, modem_index, AudioDigitalType::Connection);
 
@@ -562,6 +570,7 @@ status_t SpeechPhoneCallController::OpenModemSpeechDigitalPart(const modem_index
 #ifdef EXT_MODEM_BT_CVSD
         else if(modem_index==MODEM_EXTERNAL)
         {
+#if 0
             if (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true)
             {
                 mAudioBTCVSDControl = AudioBTCVSDControl::getInstance();
@@ -571,6 +580,7 @@ status_t SpeechPhoneCallController::OpenModemSpeechDigitalPart(const modem_index
                 }
                 mAudioBTCVSDControl->AudioExtMDCVSDCreateThread();
             }
+#endif
         }
 #endif
     }
@@ -798,6 +808,7 @@ status_t SpeechPhoneCallController::CloseModemSpeechDigitalPart(const modem_inde
 #ifdef EXT_MODEM_BT_CVSD
     if (modem_index == MODEM_EXTERNAL && bt_device_on)
     {
+#if 0
         if (WCNChipController::GetInstance()->BTUseCVSDRemoval() == true)
         {
             mAudioBTCVSDControl = AudioBTCVSDControl::getInstance();
@@ -807,6 +818,7 @@ status_t SpeechPhoneCallController::CloseModemSpeechDigitalPart(const modem_inde
             }
             mAudioBTCVSDControl->AudioExtMDCVSDDeleteThread();
         }
+#endif
     }
 #else
     if (bt_device_on)
@@ -1124,19 +1136,21 @@ status_t SpeechPhoneCallController::SetModemSpeechDAIBTAttribute(int sample_rate
     AudioDigitalDAIBT daibt_attribute;
     memset((void *)&daibt_attribute, 0, sizeof(daibt_attribute));
 
+#if 0
     if (WCNChipController::GetInstance()->IsBTMergeInterfaceSupported() == true)
     {
         daibt_attribute.mUSE_MRGIF_INPUT = AudioDigitalDAIBT::FROM_MGRIF;
     }
     else
+#endif
     {
         daibt_attribute.mUSE_MRGIF_INPUT = AudioDigitalDAIBT::FROM_BT;
     }
     daibt_attribute.mDAI_BT_MODE = (sample_rate == 8000) ? AudioDigitalDAIBT::Mode8K : AudioDigitalDAIBT::Mode16K;
     daibt_attribute.mDAI_DEL = AudioDigitalDAIBT::HighWord; // suggest always HighWord
-    daibt_attribute.mBT_LEN  = WCNChipController::GetInstance()->BTChipSyncLength();;
+    //daibt_attribute.mBT_LEN  = WCNChipController::GetInstance()->BTChipSyncLength();;
     daibt_attribute.mDATA_RDY = true;
-    daibt_attribute.mBT_SYNC = WCNChipController::GetInstance()->BTChipSyncFormat();
+    //daibt_attribute.mBT_SYNC = WCNChipController::GetInstance()->BTChipSyncFormat();
     daibt_attribute.mBT_ON = true;
     daibt_attribute.mDAIBT_ON = false;
     mAudioDigitalInstance->SetDAIBBT(&daibt_attribute);

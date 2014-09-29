@@ -87,7 +87,7 @@ static uint32_t audio_device_conv_table[][HAL_API_REV_NUM] =
     { AudioSystem::DEVICE_IN_BACK_MIC, AUDIO_DEVICE_IN_BACK_MIC },
     { AudioSystem::DEVICE_IN_DEFAULT, AUDIO_DEVICE_IN_DEFAULT },
     { AudioSystem::DEVICE_IN_FM, AUDIO_DEVICE_IN_FM},// not ANDROID_DEFAULT_CODE
-    { AudioSystem::DEVICE_IN_MATV, AUDIO_DEVICE_IN_MATV},// not ANDROID_DEFAULT_CODE
+//    { AudioSystem::DEVICE_IN_MATV, AUDIO_DEVICE_IN_MATV},// not ANDROID_DEFAULT_CODE
 };
 
 static uint32_t convert_audio_device(uint32_t from_device, int from_rev, int to_rev)
@@ -262,7 +262,7 @@ static audio_channel_mask_t out_get_channels(const struct audio_stream *stream)
     static int out_set_callback(struct audio_stream_out *stream,
             stream_callback_t callback, void *cookie)
     {
-        #if 1
+        #if 0  // 1
         const struct legacy_stream_out *out =
             reinterpret_cast<const struct legacy_stream_out *>(stream);
         return out->legacy_out->setCallBack(callback,cookie);
@@ -274,7 +274,7 @@ static audio_channel_mask_t out_get_channels(const struct audio_stream *stream)
     static int out_get_presentation_position(const struct audio_stream_out *stream,
                                uint64_t *frames, struct timespec *timestamp)
     {
-        #if 1
+        #if 0  // 1
         const struct legacy_stream_out *out =
             reinterpret_cast<const struct legacy_stream_out *>(stream);
         return out->legacy_out->getPresentationPosition(frames,timestamp);
@@ -472,7 +472,7 @@ static audio_channel_mask_t in_get_channels(const struct audio_stream *stream)
                    AUDIO_DEVICE_IN_BACK_MIC |
                    AUDIO_DEVICE_IN_ALL_SCO |
                    AUDIO_DEVICE_IN_FM | // not ANDROID_DEFAULT_CODE
-                   AUDIO_DEVICE_IN_MATV | // not ANDROID_DEFAULT_CODE
+//                   AUDIO_DEVICE_IN_MATV | // not ANDROID_DEFAULT_CODE
                    AUDIO_DEVICE_IN_DEFAULT);
     }
 
@@ -562,9 +562,12 @@ static audio_channel_mask_t in_get_channels(const struct audio_stream *stream)
 
         //devices = convert_audio_device(devices, HAL_API_REV_2_0, HAL_API_REV_1_0);
 
-        out->legacy_out = ladev->hwif->openOutputStreamWithFlag(devices, (int *) &config->format,
+        //out->legacy_out = ladev->hwif->openOutputStreamWithFlag(devices, (int *) &config->format,
+        //                                                &config->channel_mask,
+        //                                                &config->sample_rate, &status, flags);
+        out->legacy_out = ladev->hwif->openOutputStream(devices, (int *) &config->format,
                                                         &config->channel_mask,
-                                                        &config->sample_rate, &status, flags);
+                                                        &config->sample_rate, &status);
         if (!out->legacy_out) {
             ret = status;
             goto err_open;

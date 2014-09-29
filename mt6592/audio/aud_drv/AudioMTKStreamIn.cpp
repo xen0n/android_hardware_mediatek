@@ -1,3 +1,6 @@
+#define LOG_TAG "AudioMTKStreamIn"
+
+#include "AudioType.h"
 #include "AudioUtility.h"
 #include "AudioMTKStreamIn.h"
 #include "AudioResourceManager.h"
@@ -19,17 +22,16 @@
 
 #include "AudioBTCVSDControl.h"
 
-#include "AudioFMController.h"
+//#include "AudioFMController.h"
 #include "AudioMATVController.h"
-#include "WCNChipController.h"
+//#include "WCNChipController.h"
 
 
 extern "C" {
 #include "MtkAudioSrc.h"
 }
 
-#define LOG_TAG "AudioMTKStreamIn"
-#ifndef ANDROID_DEFAULT_CODE
+#if 0  // just don't use xlog
 #include <cutils/xlog.h>
 #ifdef ALOGE
 #undef ALOGE
@@ -113,6 +115,8 @@ bool AudioMTKStreamIn::CheckSampleRate(uint32_t device, uint32_t *pRate)
 
         return false;
     }
+#if 0
+    // not all fm and matv components are open-sourced, some constants are unavailable.
     if (device == AUDIO_DEVICE_IN_FM)
     {
         if (*pRate != AudioFMController::GetInstance()->GetFmUplinkSamplingRate())
@@ -123,8 +127,7 @@ bool AudioMTKStreamIn::CheckSampleRate(uint32_t device, uint32_t *pRate)
         {
             return true;
         }
-    }
-    else if (device == AUDIO_DEVICE_IN_MATV)
+    } else if (device == AUDIO_DEVICE_IN_MATV)
     {
         if (*pRate != AudioMATVController::GetInstance()->GetMatvUplinkSamplingRate())
         {
@@ -135,6 +138,7 @@ bool AudioMTKStreamIn::CheckSampleRate(uint32_t device, uint32_t *pRate)
             return true;
         }
     }
+#endif
     else if (*pRate != mStream_Default_SampleRate)
     {
         return false;
@@ -274,10 +278,12 @@ uint32 AudioMTKStreamIn::GetBufferSizeBydevice(uint32_t devices)
         case AUDIO_DEVICE_IN_BLUETOOTH_SCO_HEADSET :
             return Default_BT_Buffer;
             break;
+#if 0
         case AUDIO_DEVICE_IN_FM :
         case AUDIO_DEVICE_IN_MATV:
             return Default_Mic_Buffer;
             break;
+#endif
         default:
             ALOGW("%s(), devices(0x%x) use default Default_Mic_Buffer(0x%x)", __FUNCTION__, devices, Default_Mic_Buffer);
             return Default_Mic_Buffer;
@@ -361,6 +367,7 @@ void AudioMTKStreamIn::Set(
     else
     {
         // modify default paramters and let Audiorecord open again for reampler.
+#if 0
         if (devices == AUDIO_DEVICE_IN_FM)
         {
             *sampleRate = AudioFMController::GetInstance()->GetFmUplinkSamplingRate();
@@ -370,9 +377,10 @@ void AudioMTKStreamIn::Set(
             *sampleRate = AudioMATVController::GetInstance()->GetMatvUplinkSamplingRate();
         }
         else
-        {
+#endif
+        //{
             *sampleRate = mStream_Default_SampleRate;
-        }
+        //}
         *format  = mStream_Default_Format;
 
         *channels =  mStream_Default_Channels;
@@ -486,6 +494,7 @@ status_t AudioMTKStreamIn::SetClientSourceandMemType(AudioMTKStreamInClient *mSt
         case AUDIO_SOURCE_CUSTOMIZATION3:
             mStreamInClient->mSourceType = AudioDigitalType::I2S_IN_ADC;
             break;
+#if 0
         case AUDIO_SOURCE_MATV:
             mStreamInClient->mSourceType = AudioDigitalType::I2S_IN_2;
             break;
@@ -499,6 +508,7 @@ status_t AudioMTKStreamIn::SetClientSourceandMemType(AudioMTKStreamInClient *mSt
                 mStreamInClient->mSourceType = AudioDigitalType::I2S_IN_2;
             }
             break;
+#endif
     }
 
     switch (mStreamInClient->mAttributeClient->mdevices)
@@ -516,10 +526,12 @@ status_t AudioMTKStreamIn::SetClientSourceandMemType(AudioMTKStreamInClient *mSt
             mStreamInClient->mMemDataType = AudioDigitalType::MEM_DAI;
             mStreamInClient->mSourceType = AudioDigitalType::DAI_BT;
             break;
+#if 0
         case AUDIO_DEVICE_IN_FM :
         case AUDIO_DEVICE_IN_MATV:
             mStreamInClient->mMemDataType = AudioDigitalType::MEM_AWB;
             break;
+#endif
         default:
             ALOGW("no proper device match !!!");
             break;
@@ -872,7 +884,7 @@ ssize_t AudioMTKStreamIn::read(void *buffer, ssize_t bytes)
             }
             case AUDIO_MODE_IN_CALL:
             case AUDIO_MODE_IN_CALL_2:
-            case AUDIO_MODE_IN_CALL_EXTERNAL:
+            // case AUDIO_MODE_IN_CALL_EXTERNAL:
             {
                 // request client for ring buffer
                 mStreamInClient = mStreamInManager->RequestClient();
@@ -1103,7 +1115,7 @@ status_t AudioMTKStreamIn::standbyWithMode()
             }
             case AUDIO_MODE_IN_CALL:
             case AUDIO_MODE_IN_CALL_2:
-            case AUDIO_MODE_IN_CALL_EXTERNAL:
+            // case AUDIO_MODE_IN_CALL_EXTERNAL:
             {
                 mStreamInManager->Do_input_standby(mStreamInClient);
                 if (mStreamInClient->mBliSrc != NULL)
@@ -1302,9 +1314,11 @@ uint32_t  AudioMTKStreamIn::GetMemTypeByDevice(uint32_t Device)
             // for BT scenario , it's a special case need to modify source to DAI_BT
         case AUDIO_DEVICE_IN_BLUETOOTH_SCO_HEADSET :
             return AudioDigitalType::MEM_DAI;
+#if 0
         case AUDIO_DEVICE_IN_FM :
         case AUDIO_DEVICE_IN_MATV:
             return AudioDigitalType::MEM_AWB;
+#endif
         default:
             ALOGW("no proper device match !!!");
             return AudioDigitalType::MEM_VUL;
@@ -1865,11 +1879,14 @@ void AudioMTKStreamIn::LoadHDRecordParams(void)
     }
 
     //get VoIP param
+	// won't compile...
+#if 0
     if (GetAudioVoIPParamFromNV(&mVOIPParam) == 0)
     {
         ALOGD("GetAudioVoIPParamFromNV fail, use default value");
         memcpy(&mVOIPParam, &Audio_VOIP_Par_default, sizeof(AUDIO_VOIP_PARAM_STRUCT));
     }
+#endif
 
 #if defined(MTK_DUAL_MIC_SUPPORT)
     //get DMNR param
